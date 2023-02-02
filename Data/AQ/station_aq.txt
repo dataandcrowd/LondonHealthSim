@@ -1,0 +1,11 @@
+   Station                      pm2.5
+ 1 London Marylebone Road       12.6 
+ 2 London Westminster           11.5 
+ 3 London Bexley                10.5 
+ 4 Camden Kerbside              10.5 
+ 5 London Bloomsbury            10.3 
+ 6 London Teddington Bushy Park  9.77
+ 7 London Eltham                 9.75
+ 8 London Honor Oak Park         9.11
+ 9 London N. Kensington          8.86
+10 London Harlington             8.68

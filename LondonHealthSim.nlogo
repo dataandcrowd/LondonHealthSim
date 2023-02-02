@@ -1,6 +1,9 @@
 extensions [gis csv table]
-globals [gu road IMD lc districtPop districtadminCode districtEdu %riskpop date where number-dead pm2.5data poll_scenario
-danger age15 age1564 age65 ]
+globals [gu road IMD lc districtPop districtadminCode %riskpop date where number-dead poll_scenario
+         pm2.5_Marylebone pm2.5_Westminster  pm2.5_Camden ;; roadside/kerbside stations
+         pm2.5_NKensington pm2.5_Bloomsbury pm2.5_HonorOakPark pm2.5_Bexley pm2.5_Teddington pm2.5_Eltham ;; background stations
+         pm2.5_Harlington ;; for intercity commuters (moving back and from max pxcor max pycor)
+         danger age15 age1564 age65 ]
 breed [borough-labels borough-label]
 breed[people person]
 patches-own [is-research-area? is-built-area? name homecode IMDrank hospital pm2.5]
@@ -48,8 +51,8 @@ to go
   update-plots
   tick
   if (ticks = 2922) [stop]
-  set date item 0 table:get pm2.5data (ticks + 1)
-  set where item 2 table:get pm2.5data (ticks + 1)
+  set date item 0 table:get pm2.5_Westminster (ticks + 1)
+  set where item 2 table:get pm2.5_Westminster (ticks + 1)
   set %riskpop    (count people with [color = red and destinationName != "others"] / count people with [destinationName != "others"]) * 100
   set number-dead count people with [health <= 10]
 end
@@ -136,19 +139,32 @@ end
 ;;--------------------------------
 to add-pollution
 ; Import daily pollution
-  let p0 csv:from-file "Data/London_AQ.csv"
-  let p1 remove-item 0 p0
+  let airqualityfile csv:from-file "Data/London_AQ.csv"
+  let airqualityfile_headerremoved remove-item 0 airqualityfile
   let rep 0
-  set pm2.5data table:make
+  ;;set pm2.5data table:make
+  set pm2.5_Marylebone table:make
+  set pm2.5_Westminster table:make
+  set pm2.5_Camden table:make
+  set pm2.5_NKensington table:make
+  set pm2.5_Bloomsbury table:make
+  set pm2.5_HonorOakPark table:make
+  set pm2.5_Bexley table:make
+  set pm2.5_Teddington table:make
+  set pm2.5_Eltham table:make
+  set pm2.5_Harlington table:make
 
-  foreach p1 [ station ->
-  if item 2 station = "London N. Kensington"
-    [ let counter item 0 station
-      let the-rest remove-item 0 station
-      table:put pm2.5data counter the-rest
-    ]
+  foreach airqualityfile_headerremoved [ station ->
+  if item 2 station = "London Marylebone Road"
+   [let counter item 0 station
+    let the-rest remove-item 0 station
+    table:put pm2.5_Marylebone counter the-rest]
+
+
   ]
 set rep rep + 1
+
+
 
   ask patches with [is-research-area? = true] [
     let homeID item (4 + random 14) table:get pm2.5data 1
@@ -166,7 +182,7 @@ to set-airpollution-scenarios
   set poll_scenario table:make
 
    foreach q1 [p ->
-    if item 1 p = "pm10"
+    if item 1 p = "pm2.5"
     [ let counter item 0 p
       let the-rest remove-item 0 p
       table:put poll_scenario counter the-rest]
@@ -203,7 +219,6 @@ to set-dictionaries
 
      table:put districtpop item 1 code age8589
      table:put districtadminCode item 1 code item 0 code
-
   ]
 
 end
@@ -313,7 +328,7 @@ to set-destination   ;; Decomposing matrix
  output-print "People without destinations(nobody)"
  let wordloop 0
  foreach destinationNames [ dn ->
-    output-print word (word(word (word dn ": ") count people with
+    print word (word(word (word dn ": ") count people with
     [homename = dn and destinationPatch = nobody] ) " out of " ) count people with
     [homename = dn ]
        ]
@@ -391,6 +406,7 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 to calc-pm10
   if (Scenario = "BAU")
+  ;ask patches with [(name = Lewisham) or (name = Southwark)][]
   [ask patches with [is-research-area? = true]
    [if ticks > 0 [set-BAU]
   ]]
@@ -398,8 +414,7 @@ to calc-pm10
     if (Scenario = "INC")
   [ask patches with [is-research-area? = true]
     [
-     if ticks > 0 and ticks <= 4382 [set-BAU]
-     if ticks > 4382 [set-INC]
+     if ticks > 0 and ticks <= 2922 [set-INC]
     ]
   ]
 end
@@ -451,31 +466,6 @@ to set-INC
   if ticks > 8214 and ticks <= 8396 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 22)][set pm2.5 workID + (item %3inc table:get poll_scenario 22)]]
   if ticks > 8396 and ticks <= 8580 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 23)][set pm2.5 workID + (item %3inc table:get poll_scenario 23)]]
   if ticks > 8580 and ticks <= 8764 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 24)][set pm2.5 workID + (item %3inc table:get poll_scenario 24)]]
-
-  if ticks > 4382 and ticks <= 4562 and (ticks + 1) mod 2 = 0 [ifelse homeID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 1)][set pm2.5 homeID + (item %3inc table:get poll_scenario 1)]]
-  if ticks > 4562 and ticks <= 4744 and (ticks + 1) mod 2 = 0 [ifelse homeID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 2)][set pm2.5 homeID + (item %3inc table:get poll_scenario 2)]]
-  if ticks > 4744 and ticks <= 4850 and (ticks + 1) mod 2 = 0 [ifelse homeID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 3)][set pm2.5 homeID + (item %3inc table:get poll_scenario 3)]]
-  if ticks > 4850 and ticks <= 5112 and (ticks + 1) mod 2 = 0 [ifelse homeID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 4)][set pm2.5 homeID + (item %3inc table:get poll_scenario 4)]]
-  if ticks > 5112 and ticks <= 5292 and (ticks + 1) mod 2 = 0 [ifelse homeID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 5)][set pm2.5 homeID + (item %3inc table:get poll_scenario 5)]]
-  if ticks > 5292 and ticks <= 5474 and (ticks + 1) mod 2 = 0 [ifelse homeID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 6)][set pm2.5 homeID + (item %3inc table:get poll_scenario 6)]]
-  if ticks > 5474 and ticks <= 5658 and (ticks + 1) mod 2 = 0 [ifelse homeID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 7)][set pm2.5 homeID + (item %3inc table:get poll_scenario 7)]]
-  if ticks > 5658 and ticks <= 5842 and (ticks + 1) mod 2 = 0 [ifelse homeID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 8)][set pm2.5 homeID + (item %3inc table:get poll_scenario 8)]]
-  if ticks > 5842 and ticks <= 6024 and (ticks + 1) mod 2 = 0 [ifelse homeID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 9)][set pm2.5 homeID + (item %3inc table:get poll_scenario 9)]]
-  if ticks > 6024 and ticks <= 6206 and (ticks + 1) mod 2 = 0 [ifelse homeID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 10)][set pm2.5 homeID + (item %3inc table:get poll_scenario 10)]]
-  if ticks > 6206 and ticks <= 6390 and (ticks + 1) mod 2 = 0 [ifelse homeID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 11)][set pm2.5 homeID + (item %3inc table:get poll_scenario 11)]]
-  if ticks > 6390 and ticks <= 6574 and (ticks + 1) mod 2 = 0 [ifelse homeID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 12)][set pm2.5 homeID + (item %3inc table:get poll_scenario 12)]]
-  if ticks > 6574 and ticks <= 6754 and (ticks + 1) mod 2 = 0 [ifelse homeID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 13)][set pm2.5 homeID + (item %3inc table:get poll_scenario 13)]]
-  if ticks > 6754 and ticks <= 6936 and (ticks + 1) mod 2 = 0 [ifelse homeID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 14)][set pm2.5 homeID + (item %3inc table:get poll_scenario 14)]]
-  if ticks > 6936 and ticks <= 7120 and (ticks + 1) mod 2 = 0 [ifelse homeID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 15)][set pm2.5 homeID + (item %3inc table:get poll_scenario 15)]]
-  if ticks > 7120 and ticks <= 7304 and (ticks + 1) mod 2 = 0 [ifelse homeID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 16)][set pm2.5 homeID + (item %3inc table:get poll_scenario 16)]]
-  if ticks > 7304 and ticks <= 7484 and (ticks + 1) mod 2 = 0 [ifelse homeID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 17)][set pm2.5 homeID + (item %3inc table:get poll_scenario 17)]]
-  if ticks > 7484 and ticks <= 7666 and (ticks + 1) mod 2 = 0 [ifelse homeID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 18)][set pm2.5 homeID + (item %3inc table:get poll_scenario 18)]]
-  if ticks > 7666 and ticks <= 7850 and (ticks + 1) mod 2 = 0 [ifelse homeID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 19)][set pm2.5 homeID + (item %3inc table:get poll_scenario 19)]]
-  if ticks > 7850 and ticks <= 8034 and (ticks + 1) mod 2 = 0 [ifelse homeID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 20)][set pm2.5 homeID + (item %3inc table:get poll_scenario 20)]]
-  if ticks > 8034 and ticks <= 8214 and (ticks + 1) mod 2 = 0 [ifelse homeID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 21)][set pm2.5 homeID + (item %3inc table:get poll_scenario 21)]]
-  if ticks > 8214 and ticks <= 8396 and (ticks + 1) mod 2 = 0 [ifelse homeID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 22)][set pm2.5 homeID + (item %3inc table:get poll_scenario 22)]]
-  if ticks > 8396 and ticks <= 8580 and (ticks + 1) mod 2 = 0 [ifelse homeID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 23)][set pm2.5 homeID + (item %3inc table:get poll_scenario 23)]]
-  if ticks > 8580 and ticks <= 8764 and (ticks + 1) mod 2 = 0 [ifelse homeID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 24)][set pm2.5 homeID + (item %3inc table:get poll_scenario 24)]]
 end
 
 
@@ -741,7 +731,7 @@ Scenario
 
 OUTPUT
 402
-301
+407
 705
 528
 12
