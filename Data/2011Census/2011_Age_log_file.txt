@@ -1,0 +1,30 @@
+Summary for: 2011_Age
+Number of non Split Grid Cells: 791616
+Number of Regions: 10444
+Section 1 1. Loading Libaries, Functions and Data  elapsed:  11.06  seconds  0.1843  min  0.0031  hours 
+Section 2 NA  elapsed:  75.92  seconds  1.265  min  0.021  hours 
+Section 3 Allocate Contiguous Regions  elapsed:  0.17  seconds  0.002833  min  4.7e-05  hours 
+Section 4 Grid Smooth (by region) and Rescale for AgeAll  elapsed:  88.27  seconds  1.471  min  0.025  hours 
+Section 5 Grid Smooth (by region) and Rescale for Age0_4  elapsed:  81.49  seconds  1.358  min  0.023  hours 
+Section 6 Grid Smooth (by region) and Rescale for Age5_7  elapsed:  77.60  seconds  1.293  min  0.022  hours 
+Section 7 Grid Smooth (by region) and Rescale for Age8_9  elapsed:  85.21  seconds  1.42  min  0.024  hours 
+Section 8 Grid Smooth (by region) and Rescale for Age10_14  elapsed:  88.22  seconds  1.47  min  0.025  hours 
+Section 9 Grid Smooth (by region) and Rescale for Age15  elapsed:  90.20  seconds  1.503  min  0.025  hours 
+Section 10 Grid Smooth (by region) and Rescale for Age16_17  elapsed:  88.71  seconds  1.479  min  0.025  hours 
+Section 11 Grid Smooth (by region) and Rescale for Age18_19  elapsed:  89.06  seconds  1.484  min  0.025  hours 
+Section 12 Grid Smooth (by region) and Rescale for Age20_24  elapsed:  93.60  seconds  1.56  min  0.026  hours 
+Section 13 Grid Smooth (by region) and Rescale for Age25_29  elapsed:  87.52  seconds  1.459  min  0.024  hours 
+Section 14 Grid Smooth (by region) and Rescale for Age30_44  elapsed:  86.44  seconds  1.441  min  0.024  hours 
+Section 15 Grid Smooth (by region) and Rescale for Age45_59  elapsed:  84.24  seconds  1.404  min  0.023  hours 
+Section 16 Grid Smooth (by region) and Rescale for Age60_64  elapsed:  82.60  seconds  1.377  min  0.023  hours 
+Section 17 Grid Smooth (by region) and Rescale for Age65_74  elapsed:  82.64  seconds  1.377  min  0.023  hours 
+Section 18 Grid Smooth (by region) and Rescale for Age75_84  elapsed:  76.10  seconds  1.268  min  0.021  hours 
+Section 19 Grid Smooth (by region) and Rescale for Age85_89  elapsed:  82.88  seconds  1.381  min  0.023  hours 
+Section 20 Grid Smooth (by region) and Rescale for Age90p  elapsed:  82.30  seconds  1.372  min  0.023  hours 
+Section 21 Grid Smooth (by region) and Rescale for AgeMean  elapsed:  82.01  seconds  1.367  min  0.023  hours 
+Section 22 Grid Smooth (by region) and Rescale for AgeMedin  elapsed:  83.06  seconds  1.384  min  0.023  hours 
+Section 23 Grid Smooth (by region) and Rescale for Age0_14  elapsed:  83.87  seconds  1.398  min  0.023  hours 
+Section 24 Grid Smooth (by region) and Rescale for Age15_19  elapsed:  85.02  seconds  1.417  min  0.024  hours 
+Section 25 Grid Smooth (by region) and Rescale for Age65p  elapsed:  75.45  seconds  1.258  min  0.021  hours 
+Section 26 Total: Grid Smooth (by region) and Iterative Grid Smoothing  elapsed:  1523.92  seconds  25.40  min  0.42  hours 
+Total Time elapsed: 2258.77 seconds 37.65 min 0.63 hours 

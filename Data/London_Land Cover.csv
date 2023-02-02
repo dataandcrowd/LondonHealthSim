@@ -1,0 +1,22 @@
+color,index,name
+#e10000,1,Broadleaved woodland
+#006600,2,Coniferous woodland
+#732600,3,Arable and horticulture
+#00ff00,4,Improved grassland
+#7fe57f,5,Neutral grassland
+#70a800,6,Calcareous grassland
+#998100,7,Acid grassland
+#ffff00,8,"Fen, marsh and swamp"
+#801a80,9,Heather
+#e68ca6,10,Heather grassland
+#008073,11,Bog
+#d2d2ff,12,Inland rock
+#000080,13,Saltwater
+#0000ff,14,Freshwater
+#ccaa00,15,Supralittoral rock
+#ccb300,16,Supralittoral sediment
+#ffff80,17,Littoral rock
+#ffff80,18,Littoral sediment
+#8080ff,19,Saltmarsh
+#000000,20,Urban
+#808080,21,Suburban
