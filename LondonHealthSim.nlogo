@@ -168,7 +168,15 @@ to add-pollution
   ]
 set rep rep + 1
 
+  ;let list_of_stations (list pm2.5_NKensington pm2.5_Bloomsbury pm2.5_HonorOakPark pm2.5_Bexley pm2.5_Teddington pm2.5_Eltham)
+  ;output-print list_of_stations
 
+  let list_of_districts (list "Barking and Dagenham" "Havering" "Hillingdon" "Richmond upon Thames" "Bexley"
+    "Bromley" "Brent" "Greenwich" "Harrow" "Enfield" "Sutton" "Merton" "Barnet" "Newham" "Camden" "Ealing"
+    "Redbridge" "Croydon" "Southwark" "Tower Hamlets" "Haringey" "Wandsworth" "Waltham Forest" "Lewisham" "Hounslow" "Hackney"
+    "Kingston upon Thames" "Hammersmith and Fulham" "Westminster" "Lambeth" "Islington" "Kensington and Chelsea" "City of London")
+  output-print list_of_districts
+  output-print item 0 list_of_districts
 
  ; ask patches with [is-research-area? = true] [
  ;   let homeID item (4 + random 14) table:get pm2.5data 1
