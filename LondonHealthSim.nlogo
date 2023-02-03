@@ -1,5 +1,5 @@
 extensions [gis csv table]
-globals [gu road IMD lc districtPop districtadminCode %riskpop date where number-dead poll_scenario
+globals [gu road IMD lc districtPop districtadminCode %riskpop date where number-dead poll_scenario pm2.5data
          pm2.5_Marylebone pm2.5_Westminster  pm2.5_Camden ;; roadside/kerbside stations
          pm2.5_NKensington pm2.5_Bloomsbury pm2.5_HonorOakPark pm2.5_Bexley pm2.5_Teddington pm2.5_Eltham ;; background stations
          pm2.5_Harlington ;; for intercity commuters (moving back and from max pxcor max pycor)
@@ -155,22 +155,26 @@ to add-pollution
   set pm2.5_Harlington table:make
 
   foreach airqualityfile_headerremoved [ station ->
-  if item 2 station = "London Marylebone Road"
-   [let counter item 0 station
-    let the-rest remove-item 0 station
-    table:put pm2.5_Marylebone counter the-rest]
-
-
+    if item 2 station = "London Marylebone Road" [let counter item 0 station let the-rest remove-item 0 station table:put pm2.5_Marylebone counter the-rest]
+    if item 2 station = "London Westminster"     [let counter item 0 station let the-rest remove-item 0 station table:put pm2.5_Westminster counter the-rest]
+    if item 2 station = "London Bexley"          [let counter item 0 station let the-rest remove-item 0 station table:put pm2.5_Bexley counter the-rest]
+    if item 2 station = "London Eltham"          [let counter item 0 station let the-rest remove-item 0 station table:put pm2.5_Eltham counter the-rest]
+    if item 2 station = "Camden Kerbside"        [let counter item 0 station let the-rest remove-item 0 station table:put pm2.5_Camden counter the-rest]
+    if item 2 station = "London N. Kensington"   [let counter item 0 station let the-rest remove-item 0 station table:put pm2.5_NKensington counter the-rest]
+    if item 2 station = "London Bloomsbury"      [let counter item 0 station let the-rest remove-item 0 station table:put pm2.5_Bloomsbury counter the-rest]
+    if item 2 station = "London Harlington"      [let counter item 0 station let the-rest remove-item 0 station table:put pm2.5_Harlington counter the-rest]
+    if item 2 station = "London Honor Oak Park"  [let counter item 0 station let the-rest remove-item 0 station table:put pm2.5_HonorOakPark counter the-rest]
+    if item 2 station = "London Teddington Bushy Park" [let counter item 0 station let the-rest remove-item 0 station table:put pm2.5_Teddington counter the-rest]
   ]
 set rep rep + 1
 
 
 
-  ask patches with [is-research-area? = true] [
-    let homeID item (4 + random 14) table:get pm2.5data 1
-    ifelse homeID > 0
-    [set pm2.5  homeID][set pm2.5 max table:get pm2.5data 1]
-  ]
+ ; ask patches with [is-research-area? = true] [
+ ;   let homeID item (4 + random 14) table:get pm2.5data 1
+ ;   ifelse homeID > 0
+ ;   [set pm2.5  homeID][set pm2.5 max table:get pm2.5data 1]
+ ; ]
 
 end
 
