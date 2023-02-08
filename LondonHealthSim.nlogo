@@ -3,7 +3,8 @@ globals [gu road IMD lc districtPop districtadminCode %riskpop date where number
          pm2.5_Marylebone pm2.5_Westminster  pm2.5_Camden ;; roadside/kerbside stations
          pm2.5_NKensington pm2.5_Bloomsbury pm2.5_HonorOakPark pm2.5_Bexley pm2.5_Teddington pm2.5_Eltham ;; background stations
          pm2.5_Harlington ;; for intercity commuters (moving back and from max pxcor max pycor)
-         danger age15 age1564 age65 ]
+         inner_south inner_north inner_ncentre outer_west outer_east
+         danger age15 age1564 age65 scenario_counter scenario_date]
 breed [borough-labels borough-label]
 breed[people person]
 patches-own [is-research-area? is-built-area? name homecode IMDrank hospital pm2.5]
@@ -16,6 +17,7 @@ to setup
  reset-ticks
  set-gis-data
  set-urban-areas
+ set-district-division
  add-labels
  add-admin
  add-IMD
@@ -120,6 +122,20 @@ output-print "Admin area added" ;;
 end
 
 ;;--------------------------------
+to set-district-division
+
+  set inner_south (list "Southwark" "Lambeth" "Wandsworth" "Lewisham")
+  set inner_north (list "Hammersmith and Fulham" "Kensington and Chelsea" "Haringey" "Tower Hamlets" "Newham")
+  set inner_ncentre (list "Westminster" "Camden" "Islington" "Hackney")
+  set outer_west (list "Enfield" "Waltham Forest" "Barnet" "Brent" "Harrow" "Ealing" "Hounslow" "Hillingdon"
+  "Richmond upon Thames" "Kingston upon Thames" "Merton" "Sutton")
+  set outer_east (list "Waltham Forest" "Redbridge" "Barking and Dagenham" "Havering" "Greenwich" "Bexeley"
+  "Bromley" "Croydon")
+
+  output-print "set-district-division added"
+end
+
+;;--------------------------------
 to add-IMD
   gis:set-drawing-color blue
   foreach gis:feature-list-of IMD [vector-feature ->
@@ -133,7 +149,7 @@ to add-IMD
   ;; if rank 88-123: +20
   ;; if rank 124-148: +40
 
-output-print "deprivation index added" ;;
+output-print "Deprivation Index added" ;;
 end
 
 ;;--------------------------------
@@ -168,22 +184,12 @@ to add-pollution
   ]
 set rep rep + 1
 
-  ;let list_of_stations (list pm2.5_NKensington pm2.5_Bloomsbury pm2.5_HonorOakPark pm2.5_Bexley pm2.5_Teddington pm2.5_Eltham)
-  ;output-print list_of_stations
 
   let list_of_districts (list "Barking and Dagenham" "Havering" "Hillingdon" "Richmond upon Thames" "Bexley"
     "Bromley" "Brent" "Greenwich" "Harrow" "Enfield" "Sutton" "Merton" "Barnet" "Newham" "Camden" "Ealing"
     "Redbridge" "Croydon" "Southwark" "Tower Hamlets" "Haringey" "Wandsworth" "Waltham Forest" "Lewisham" "Hounslow" "Hackney"
     "Kingston upon Thames" "Hammersmith and Fulham" "Westminster" "Lambeth" "Islington" "Kensington and Chelsea" "City of London")
-  output-print list_of_districts
-  output-print item 0 list_of_districts
-
- ; ask patches with [is-research-area? = true] [
- ;   let homeID item (4 + random 14) table:get pm2.5data 1
- ;   ifelse homeID > 0
- ;   [set pm2.5  homeID][set pm2.5 max table:get pm2.5data 1]
- ; ]
-
+ output-print "air pollution installed"
 end
 
 to set-airpollution-scenarios
@@ -200,6 +206,12 @@ to set-airpollution-scenarios
       table:put poll_scenario counter the-rest]
   ]
   set looop looop + 1
+
+
+  set scenario_counter 1
+  set scenario_date item 1 table:get poll_scenario scenario_counter
+  if date = scenario_date [set scenario_counter scenario_counter + 1]
+
 
 end
 
@@ -354,7 +366,6 @@ end
 
 to set-at-hospital
   ask patch min-pxcor min-pycor [set pcolor grey + 1]
-  ;ask patches with [ count neighbors with [pcolor = grey + 1] = 8 ][set pcolor grey + 1 set hospital "true"]
   output-print "Set Hospital" ;;
 end
 
@@ -417,19 +428,94 @@ end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 to calc-pm10
-  if (Scenario = "BAU")
-  ;ask patches with [(name = Lewisham) or (name = Southwark)][]
-  [ask patches with [is-research-area? = true]
-   [if ticks > 0 [set-BAU]
-  ]]
+  ;set inner_south (list "Southwark" "Lambeth" "Wandsworth" "Lewisham")
+  ;set inner_north (list "Hammersmith and Fulham" "Kensington and Chelsea" "Haringey" "Tower Hamlets" "Newham")
+  ;set inner_ncentre (list "Westminster" "Camden" "Islington" "Hackney")
+  ;set outer_west (list "Enfield" "Waltham Forest" "Barnet" "Brent" "Harrow" "Ealing" "Hounslow" "Hillingdon"
+  ;"Richmond upon Thames" "Kingston upon Thames" "Merton" "Sutton")
+  ;set outer_east (list "Waltham Forest" "Redbridge" "Barking and Dagenham" "Havering" "Greenwich" "Bexeley" "Bromley" "Croydon")
 
-    if (Scenario = "INC")
-  [ask patches with [is-research-area? = true]
-    [
-     if ticks > 0 and ticks <= 2922 [set-INC]
-    ]
+  let theloop 0
+    foreach inner_south [sdistricts -> ask patches with [name = sdistricts][if ticks > 0 [set-inner_south]]]
+    foreach inner_north [ndistricts -> ask patches with [name = ndistricts][if ticks > 0 [set-inner_north]]]
+    foreach inner_ncentre [incentre -> ask patches with [name = incentre][if ticks > 0 [set-inner_centre]]]
+    foreach outer_west [outerwest -> ask patches with [name = outerwest][if ticks > 0 [set-outer_west]]]
+    foreach outer_east [outereast -> ask patches with [name = outereast][if ticks > 0 [set-outer_west]]]
+  set theloop theloop + 1
+
+  ask patch max-pxcor max-pycor[if ticks > 0 [set-intercity]]
+
+
+end
+
+
+to set-inner_south
+  let homeID item (3 + random 13) table:get pm2.5_HonorOakPark ticks + 1
+  let workID item (3 + random 11) table:get pm2.5_HonorOakPark ticks + 1
+
+  if (Scenario = "BAU")[
+   if (ticks + 1) mod 2 = 0 [ifelse homeID > 0 [set pm2.5 homeID][set pm2.5 max table:get pm2.5_HonorOakPark ticks + 1]]
+   if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID][set pm2.5 max table:get pm2.5_HonorOakPark ticks + 1]]
+  ]
+
+  if (Scenario = "INC")[
+   if (ticks + 1 mod 2 = 0) [ifelse homeID > 0 [set pm2.5 homeID][set pm2.5 max table:get pm2.5_HonorOakPark ticks + 1]]
+   if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID][set pm2.5 max table:get pm2.5_HonorOakPark ticks + 1]]
+  ]
+
+end
+
+to set-inner_north
+  if (Scenario = "BAU")[
+  let homeID item (3 + random 13) table:get pm2.5_NKensington ticks + 1
+  let workID item (3 + random 11) table:get pm2.5_NKensington ticks + 1
+
+  if (ticks + 1) mod 2 = 0 [ifelse homeID > 0 [set pm2.5 homeID][set pm2.5 max table:get pm2.5_NKensington ticks + 1]]
+  if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID][set pm2.5 max table:get pm2.5_NKensington ticks + 1]]
   ]
 end
+
+to set-inner_centre
+  if (Scenario = "BAU")[
+  let homeID item (3 + random 13) table:get pm2.5_Bloomsbury ticks + 1
+  let workID item (3 + random 11) table:get pm2.5_Bloomsbury ticks + 1
+
+  if (ticks + 1) mod 2 = 0 [ifelse homeID > 0 [set pm2.5 homeID][set pm2.5 max table:get pm2.5_Bloomsbury ticks + 1]]
+  if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID][set pm2.5 max table:get pm2.5_Bloomsbury ticks + 1]]
+  ]
+end
+
+to set-outer_west
+ if (Scenario = "BAU")[
+  let homeID item (3 + random 13) table:get pm2.5_Teddington ticks + 1
+  let workID item (3 + random 11) table:get pm2.5_Teddington ticks + 1
+
+  if (ticks + 1) mod 2 = 0 [ifelse homeID > 0 [set pm2.5 homeID][set pm2.5 max table:get pm2.5_Teddington ticks + 1]]
+  if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID][set pm2.5 max table:get pm2.5_Teddington ticks + 1]]
+  ]
+end
+
+to set-outer_east
+ if (Scenario = "BAU")[
+  let homeID item (3 + random 13) table:get pm2.5_Eltham ticks + 1
+  let workID item (3 + random 11) table:get pm2.5_Eltham ticks + 1
+
+  if (ticks + 1) mod 2 = 0 [ifelse homeID > 0 [set pm2.5 homeID][set pm2.5 max table:get pm2.5_Eltham ticks + 1]]
+  if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID][set pm2.5 max table:get pm2.5_Eltham ticks + 1]]
+  ]
+end
+
+
+to set-intercity
+  if (Scenario = "BAU")[
+  let homeID item (3 + random 13) table:get pm2.5_Harlington ticks + 1
+  let workID item (3 + random 11) table:get pm2.5_Harlington ticks + 1
+
+  if (ticks + 1) mod 2 = 0 [ifelse homeID > 0 [set pm2.5 homeID][set pm2.5 max table:get pm2.5_Harlington ticks + 1]]
+  if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID][set pm2.5 max table:get pm2.5_Harlington ticks + 1]]
+  ]
+end
+
 
 to set-BAU
   let homeID item (3 + random 13) table:get pm2.5data ticks + 1
@@ -447,37 +533,43 @@ to set-BAU
 end
 
 to set-INC
-  let homeID item (3 + random 13) table:get pm2.5data ticks + 1
-  let workID item (3 + random 11) table:get pm2.5data ticks + 1
-  let %3inc 5
 
-  if Scenario-Active = "Business as Usual" [set %3inc %3inc]
-  if Scenario-Active = "Increasing" [set %3inc %3inc + 1]
 
-  if ticks > 4382 and ticks <= 4562 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 1)][set pm2.5 workID + (item %3inc table:get poll_scenario 1)]]
-  if ticks > 4562 and ticks <= 4744 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 2)][set pm2.5 workID + (item %3inc table:get poll_scenario 2)]]
-  if ticks > 4744 and ticks <= 4850 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 3)][set pm2.5 workID + (item %3inc table:get poll_scenario 3)]]
-  if ticks > 4850 and ticks <= 5112 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 4)][set pm2.5 workID + (item %3inc table:get poll_scenario 4)]]
-  if ticks > 5112 and ticks <= 5292 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 5)][set pm2.5 workID + (item %3inc table:get poll_scenario 5)]]
-  if ticks > 5292 and ticks <= 5474 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 6)][set pm2.5 workID + (item %3inc table:get poll_scenario 6)]]
-  if ticks > 5474 and ticks <= 5658 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 7)][set pm2.5 workID + (item %3inc table:get poll_scenario 7)]]
-  if ticks > 5658 and ticks <= 5842 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 8)][set pm2.5 workID + (item %3inc table:get poll_scenario 8)]]
-  if ticks > 5842 and ticks <= 6024 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 9)][set pm2.5 workID + (item %3inc table:get poll_scenario 9)]]
-  if ticks > 6024 and ticks <= 6206 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 10)][set pm2.5 workID + (item %3inc table:get poll_scenario 10)]]
-  if ticks > 6206 and ticks <= 6390 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 11)][set pm2.5 workID + (item %3inc table:get poll_scenario 11)]]
-  if ticks > 6390 and ticks <= 6574 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 12)][set pm2.5 workID + (item %3inc table:get poll_scenario 12)]]
-  if ticks > 6574 and ticks <= 6754 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 13)][set pm2.5 workID + (item %3inc table:get poll_scenario 13)]]
-  if ticks > 6754 and ticks <= 6936 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 14)][set pm2.5 workID + (item %3inc table:get poll_scenario 14)]]
-  if ticks > 6936 and ticks <= 7120 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 15)][set pm2.5 workID + (item %3inc table:get poll_scenario 15)]]
-  if ticks > 7120 and ticks <= 7304 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 16)][set pm2.5 workID + (item %3inc table:get poll_scenario 16)]]
-  if ticks > 7304 and ticks <= 7484 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 17)][set pm2.5 workID + (item %3inc table:get poll_scenario 17)]]
-  if ticks > 7484 and ticks <= 7666 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 18)][set pm2.5 workID + (item %3inc table:get poll_scenario 18)]]
-  if ticks > 7666 and ticks <= 7850 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 19)][set pm2.5 workID + (item %3inc table:get poll_scenario 19)]]
-  if ticks > 7850 and ticks <= 8034 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 20)][set pm2.5 workID + (item %3inc table:get poll_scenario 20)]]
-  if ticks > 8034 and ticks <= 8214 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 21)][set pm2.5 workID + (item %3inc table:get poll_scenario 21)]]
-  if ticks > 8214 and ticks <= 8396 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 22)][set pm2.5 workID + (item %3inc table:get poll_scenario 22)]]
-  if ticks > 8396 and ticks <= 8580 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 23)][set pm2.5 workID + (item %3inc table:get poll_scenario 23)]]
-  if ticks > 8580 and ticks <= 8764 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 24)][set pm2.5 workID + (item %3inc table:get poll_scenario 24)]]
+
+  ;let homeID item (3 + random 13) table:get pm2.5data ticks + 1
+  ;let workID item (3 + random 11) table:get pm2.5data ticks + 1
+  ;let %3inc 5
+
+  ;let poll_scenario (list 0.00 0.39 0.52 1.07 1.71 2.15 1.45 2.24 2.31 3.18 2.73 3.54 4.71 4.11 4.23 4.28)
+  ;print poll_scenario
+
+  ;if Scenario-Active = "Business as Usual" [set %3inc %3inc]
+  ;if Scenario-Active = "Increasing" [set %3inc %3inc + 1]
+
+  ;if ticks > 4382 and ticks <= 4562 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 1)][set pm2.5 workID + (item %3inc table:get poll_scenario 1)]]
+  ;if ticks > 4562 and ticks <= 4744 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 2)][set pm2.5 workID + (item %3inc table:get poll_scenario 2)]]
+  ;if ticks > 4744 and ticks <= 4850 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 3)][set pm2.5 workID + (item %3inc table:get poll_scenario 3)]]
+  ;if ticks > 4850 and ticks <= 5112 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 4)][set pm2.5 workID + (item %3inc table:get poll_scenario 4)]]
+  ;if ticks > 5112 and ticks <= 5292 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 5)][set pm2.5 workID + (item %3inc table:get poll_scenario 5)]]
+  ;if ticks > 5292 and ticks <= 5474 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 6)][set pm2.5 workID + (item %3inc table:get poll_scenario 6)]]
+  ;if ticks > 5474 and ticks <= 5658 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 7)][set pm2.5 workID + (item %3inc table:get poll_scenario 7)]]
+  ;if ticks > 5658 and ticks <= 5842 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 8)][set pm2.5 workID + (item %3inc table:get poll_scenario 8)]]
+  ;if ticks > 5842 and ticks <= 6024 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 9)][set pm2.5 workID + (item %3inc table:get poll_scenario 9)]]
+  ;if ticks > 6024 and ticks <= 6206 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 10)][set pm2.5 workID + (item %3inc table:get poll_scenario 10)]]
+  ;if ticks > 6206 and ticks <= 6390 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 11)][set pm2.5 workID + (item %3inc table:get poll_scenario 11)]]
+  ;if ticks > 6390 and ticks <= 6574 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 12)][set pm2.5 workID + (item %3inc table:get poll_scenario 12)]]
+  ;if ticks > 6574 and ticks <= 6754 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 13)][set pm2.5 workID + (item %3inc table:get poll_scenario 13)]]
+  ;if ticks > 6754 and ticks <= 6936 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 14)][set pm2.5 workID + (item %3inc table:get poll_scenario 14)]]
+  ;if ticks > 6936 and ticks <= 7120 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 15)][set pm2.5 workID + (item %3inc table:get poll_scenario 15)]]
+  ;if ticks > 7120 and ticks <= 7304 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 16)][set pm2.5 workID + (item %3inc table:get poll_scenario 16)]]
+  ;if ticks > 7304 and ticks <= 7484 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 17)][set pm2.5 workID + (item %3inc table:get poll_scenario 17)]]
+  ;if ticks > 7484 and ticks <= 7666 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 18)][set pm2.5 workID + (item %3inc table:get poll_scenario 18)]]
+  ;if ticks > 7666 and ticks <= 7850 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 19)][set pm2.5 workID + (item %3inc table:get poll_scenario 19)]]
+  ;if ticks > 7850 and ticks <= 8034 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 20)][set pm2.5 workID + (item %3inc table:get poll_scenario 20)]]
+  ;if ticks > 8034 and ticks <= 8214 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 21)][set pm2.5 workID + (item %3inc table:get poll_scenario 21)]]
+  ;if ticks > 8214 and ticks <= 8396 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 22)][set pm2.5 workID + (item %3inc table:get poll_scenario 22)]]
+  ;if ticks > 8396 and ticks <= 8580 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 23)][set pm2.5 workID + (item %3inc table:get poll_scenario 23)]]
+  ;if ticks > 8580 and ticks <= 8764 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 24)][set pm2.5 workID + (item %3inc table:get poll_scenario 24)]]
 end
 
 
@@ -491,33 +583,6 @@ to district-plot
                                         (count people with [ destinationName != "others"]) * 100)
 end
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-to dong-plot
-  set-current-plot "Subdistrict level"
-  set-current-plot-pen "shinsa_risk"    plot((count people with [color = red and districtName = "Shinsa" and destinationName != "others"])   / (count people with [districtName = "Shinsa" and destinationName != "others"])    * 100)
-	set-current-plot-pen "nonhyun1_risk"  plot((count people with [color = red and districtName = "Nonhyeon1" and destinationName != "others"])/ (count people with [districtName = "Nonhyeon1" and destinationName != "others"]) * 100)
-	set-current-plot-pen "nonhyun2_risk"  plot((count people with [color = red and districtName = "Nonhyeon2" and destinationName != "others"])/ (count people with [districtName = "Nonhyeon2" and destinationName != "others"]) * 100)
-	set-current-plot-pen "samsung1_risk"  plot((count people with [color = red and districtName = "Samseong1" and destinationName != "others"])/ (count people with [districtName = "Samseong1" and destinationName != "others"]) * 100)
-	set-current-plot-pen "samsung2_risk"  plot((count people with [color = red and districtName = "Samseong2" and destinationName != "others"])/ (count people with [districtName = "Samseong2" and destinationName != "others"]) * 100)
-	set-current-plot-pen "daechi1_risk"   plot((count people with [color = red and districtName = "Daechi1" and destinationName != "others"]) / (count people with [districtName = "Daechi1" and destinationName != "others"])  * 100)
-	set-current-plot-pen "daechi4_risk"   plot((count people with [color = red and districtName = "Daechi4" and destinationName != "others"]) / (count people with [districtName = "Daechi4" and destinationName != "others"])  * 100)
-	set-current-plot-pen "yeoksam1_risk"  plot((count people with [color = red and districtName = "Yeoksam1" and destinationName != "others"])/ (count people with [districtName = "Yeoksam1" and destinationName != "others"]) * 100)
-	set-current-plot-pen "yeoksam2_risk"  plot((count people with [color = red and districtName = "Yeoksam2" and destinationName != "others"])/ (count people with [districtName = "Yeoksam2" and destinationName != "others"]) * 100)
-	set-current-plot-pen "dogok1_risk"    plot((count people with [color = red and districtName = "Dogok1" and destinationName != "others"])  / (count people with [districtName = "Dogok1" and destinationName != "others"])   * 100)
-	set-current-plot-pen "dogok2_risk"    plot((count people with [color = red and districtName = "Dogok2" and destinationName != "others"])  / (count people with [districtName = "Dogok2" and destinationName != "others"])   * 100)
-	set-current-plot-pen "gaepo1_risk"    plot((count people with [color = red and districtName = "Gaepo1" and destinationName != "others"])  / (count people with [districtName = "Gaepo1" and destinationName != "others"])   * 100)
-	set-current-plot-pen "gaepo4_risk"    plot((count people with [color = red and districtName = "Gaepo4" and destinationName != "others"])  / (count people with [districtName = "Gaepo4" and destinationName != "others"])   * 100)
-	set-current-plot-pen "ilwon_risk"     plot((count people with [color = red and districtName = "Ilwonbon" and destinationName != "others"])   / (count people with [districtName = "Ilwonbon" and destinationName != "others"])    * 100)
-	set-current-plot-pen "ilwon1_risk"    plot((count people with [color = red and districtName = "Ilwon1" and destinationName != "others"])  / (count people with [districtName = "Ilwon1" and destinationName != "others"])   * 100)
-	set-current-plot-pen "ilwon2_risk"    plot((count people with [color = red and districtName = "Ilwon2" and destinationName != "others"])  / (count people with [districtName = "Ilwon2" and destinationName != "others"])   * 100)
-	set-current-plot-pen "suseo_risk"     plot((count people with [color = red and districtName = "Suseo" and destinationName != "others"])   / (count people with [districtName = "Suseo" and destinationName != "others"])    * 100)
-	set-current-plot-pen "ap_risk"        plot((count people with [color = red and districtName = "Apgujeong1" and destinationName != "others"])      / (count people with [districtName = "Apgujeong1" and destinationName != "others"])       * 100)
-	set-current-plot-pen "chungdam_risk"  plot((count people with [color = red and districtName = "Cheongdam" and destinationName != "others"])/ (count people with [districtName = "Cheongdam" and destinationName != "others"]) * 100)
-	set-current-plot-pen "daechi2_risk"   plot((count people with [color = red and districtName = "Daechi2" and destinationName != "others"]) / (count people with [districtName = "Daechi2" and destinationName != "others"])  * 100)
-	set-current-plot-pen "gaepo2_risk"    plot((count people with [color = red and districtName = "Gaepo2" and destinationName != "others"])  / (count people with [districtName = "Gaepo2" and destinationName != "others"])   * 100)
-	set-current-plot-pen "segok_risk"     plot((count people with [color = red and districtName = "Segok" and destinationName != "others"])   / (count people with [districtName = "Segok" and destinationName != "others"])    * 100)
-end
 
 to age-plot
   set-current-plot "By Age Group"
@@ -711,7 +776,7 @@ PLOT
 406
 388
 526
-PM10 patches
+PM2.5 patches
 time
 pm10
 0.0
