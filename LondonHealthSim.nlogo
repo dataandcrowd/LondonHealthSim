@@ -1,5 +1,5 @@
 extensions [gis csv table]
-globals [gu road IMD lc districtPop districtadminCode %riskpop date where number-dead poll_scenario pm2.5data
+globals [gu road IMD lc districtPop districtadminCode %riskpop date where number-dead poll_scenario additional_pm25
          pm2.5_Marylebone pm2.5_Westminster  pm2.5_Camden ;; roadside/kerbside stations
          pm2.5_NKensington pm2.5_Bloomsbury pm2.5_HonorOakPark pm2.5_Bexley pm2.5_Teddington pm2.5_Eltham ;; background stations
          pm2.5_Harlington ;; for intercity commuters (moving back and from max pxcor max pycor)
@@ -213,6 +213,7 @@ to set-airpollution-scenarios
   if date = scenario_date [set scenario_counter scenario_counter + 1]
 
 
+  set additional_pm25 item 4 table:get poll_scenario scenario_counter
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -459,9 +460,11 @@ to set-inner_south
   ]
 
   if (Scenario = "INC")[
-   if (ticks + 1 mod 2 = 0) [ifelse homeID > 0 [set pm2.5 homeID][set pm2.5 max table:get pm2.5_HonorOakPark ticks + 1]]
-   if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID][set pm2.5 max table:get pm2.5_HonorOakPark ticks + 1]]
+   if (ticks + 1 mod 2 = 0) [ifelse homeID > 0 [set pm2.5 homeID * 1.05][set pm2.5 (max table:get pm2.5_HonorOakPark ticks + 1) * 1.05]]
+   if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID * 1.05][set pm2.5 (max table:get pm2.5_HonorOakPark ticks + 1) * 1.05]]
   ]
+
+  ;additional_pm25
 
 end
 
@@ -470,8 +473,8 @@ to set-inner_north
   let homeID item (3 + random 13) table:get pm2.5_NKensington ticks + 1
   let workID item (3 + random 11) table:get pm2.5_NKensington ticks + 1
 
-  if (ticks + 1) mod 2 = 0 [ifelse homeID > 0 [set pm2.5 homeID][set pm2.5 max table:get pm2.5_NKensington ticks + 1]]
-  if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID][set pm2.5 max table:get pm2.5_NKensington ticks + 1]]
+  if (ticks + 1) mod 2 = 0 [ifelse homeID > 0 [set pm2.5 homeID * 1.05][set pm2.5 (max table:get pm2.5_NKensington ticks + 1) * 1.05]]
+  if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID * 1.05][set pm2.5 (max table:get pm2.5_NKensington ticks + 1) * 1.05]]
   ]
 end
 
@@ -480,8 +483,8 @@ to set-inner_centre
   let homeID item (3 + random 13) table:get pm2.5_Bloomsbury ticks + 1
   let workID item (3 + random 11) table:get pm2.5_Bloomsbury ticks + 1
 
-  if (ticks + 1) mod 2 = 0 [ifelse homeID > 0 [set pm2.5 homeID][set pm2.5 max table:get pm2.5_Bloomsbury ticks + 1]]
-  if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID][set pm2.5 max table:get pm2.5_Bloomsbury ticks + 1]]
+  if (ticks + 1) mod 2 = 0 [ifelse homeID > 0 [set pm2.5 homeID * 1.05][set pm2.5 (max table:get pm2.5_Bloomsbury ticks + 1) * 1.05]]
+  if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID * 1.05][set pm2.5 (max table:get pm2.5_Bloomsbury ticks + 1) * 1.05]]
   ]
 end
 
@@ -490,8 +493,8 @@ to set-outer_west
   let homeID item (3 + random 13) table:get pm2.5_Teddington ticks + 1
   let workID item (3 + random 11) table:get pm2.5_Teddington ticks + 1
 
-  if (ticks + 1) mod 2 = 0 [ifelse homeID > 0 [set pm2.5 homeID][set pm2.5 max table:get pm2.5_Teddington ticks + 1]]
-  if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID][set pm2.5 max table:get pm2.5_Teddington ticks + 1]]
+  if (ticks + 1) mod 2 = 0 [ifelse homeID > 0 [set pm2.5 homeID * 1.05][set pm2.5 (max table:get pm2.5_Teddington ticks + 1) * 1.05]]
+  if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID * 1.05][set pm2.5 (max table:get pm2.5_Teddington ticks + 1) * 1.05]]
   ]
 end
 
@@ -500,8 +503,8 @@ to set-outer_east
   let homeID item (3 + random 13) table:get pm2.5_Eltham ticks + 1
   let workID item (3 + random 11) table:get pm2.5_Eltham ticks + 1
 
-  if (ticks + 1) mod 2 = 0 [ifelse homeID > 0 [set pm2.5 homeID][set pm2.5 max table:get pm2.5_Eltham ticks + 1]]
-  if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID][set pm2.5 max table:get pm2.5_Eltham ticks + 1]]
+  if (ticks + 1) mod 2 = 0 [ifelse homeID > 0 [set pm2.5 homeID * 1.05][set pm2.5 (max table:get pm2.5_Eltham ticks + 1) * 1.05]]
+  if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID * 1.05][set pm2.5 (max table:get pm2.5_Eltham ticks + 1) * 1.05]]
   ]
 end
 
@@ -511,66 +514,11 @@ to set-intercity
   let homeID item (3 + random 13) table:get pm2.5_Harlington ticks + 1
   let workID item (3 + random 11) table:get pm2.5_Harlington ticks + 1
 
-  if (ticks + 1) mod 2 = 0 [ifelse homeID > 0 [set pm2.5 homeID][set pm2.5 max table:get pm2.5_Harlington ticks + 1]]
-  if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID][set pm2.5 max table:get pm2.5_Harlington ticks + 1]]
+  if (ticks + 1) mod 2 = 0 [ifelse homeID > 0 [set pm2.5 homeID * 1.05][set pm2.5 (max table:get pm2.5_Harlington ticks + 1) * 1.05]]
+  if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID * 1.05][set pm2.5 (max table:get pm2.5_Harlington ticks + 1) * 1.05]]
   ]
 end
 
-
-to set-BAU
-  let homeID item (3 + random 13) table:get pm2.5data ticks + 1
-  let workID item (3 + random 11) table:get pm2.5data ticks + 1
-
-   if (ticks + 1) mod 2 = 0 [
-    ifelse homeID > 0
-    [set pm2.5  homeID][set pm2.5 max table:get pm2.5data ticks + 1]
-  ]
-   if ticks mod 2 = 0 [
-    ifelse workID > 0
-    [set pm2.5  workID][set pm2.5 max table:get pm2.5data ticks + 1]
-  ]
-
-end
-
-to set-INC
-
-
-
-  ;let homeID item (3 + random 13) table:get pm2.5data ticks + 1
-  ;let workID item (3 + random 11) table:get pm2.5data ticks + 1
-  ;let %3inc 5
-
-  ;let poll_scenario (list 0.00 0.39 0.52 1.07 1.71 2.15 1.45 2.24 2.31 3.18 2.73 3.54 4.71 4.11 4.23 4.28)
-  ;print poll_scenario
-
-  ;if Scenario-Active = "Business as Usual" [set %3inc %3inc]
-  ;if Scenario-Active = "Increasing" [set %3inc %3inc + 1]
-
-  ;if ticks > 4382 and ticks <= 4562 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 1)][set pm2.5 workID + (item %3inc table:get poll_scenario 1)]]
-  ;if ticks > 4562 and ticks <= 4744 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 2)][set pm2.5 workID + (item %3inc table:get poll_scenario 2)]]
-  ;if ticks > 4744 and ticks <= 4850 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 3)][set pm2.5 workID + (item %3inc table:get poll_scenario 3)]]
-  ;if ticks > 4850 and ticks <= 5112 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 4)][set pm2.5 workID + (item %3inc table:get poll_scenario 4)]]
-  ;if ticks > 5112 and ticks <= 5292 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 5)][set pm2.5 workID + (item %3inc table:get poll_scenario 5)]]
-  ;if ticks > 5292 and ticks <= 5474 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 6)][set pm2.5 workID + (item %3inc table:get poll_scenario 6)]]
-  ;if ticks > 5474 and ticks <= 5658 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 7)][set pm2.5 workID + (item %3inc table:get poll_scenario 7)]]
-  ;if ticks > 5658 and ticks <= 5842 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 8)][set pm2.5 workID + (item %3inc table:get poll_scenario 8)]]
-  ;if ticks > 5842 and ticks <= 6024 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 9)][set pm2.5 workID + (item %3inc table:get poll_scenario 9)]]
-  ;if ticks > 6024 and ticks <= 6206 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 10)][set pm2.5 workID + (item %3inc table:get poll_scenario 10)]]
-  ;if ticks > 6206 and ticks <= 6390 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 11)][set pm2.5 workID + (item %3inc table:get poll_scenario 11)]]
-  ;if ticks > 6390 and ticks <= 6574 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 12)][set pm2.5 workID + (item %3inc table:get poll_scenario 12)]]
-  ;if ticks > 6574 and ticks <= 6754 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 13)][set pm2.5 workID + (item %3inc table:get poll_scenario 13)]]
-  ;if ticks > 6754 and ticks <= 6936 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 14)][set pm2.5 workID + (item %3inc table:get poll_scenario 14)]]
-  ;if ticks > 6936 and ticks <= 7120 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 15)][set pm2.5 workID + (item %3inc table:get poll_scenario 15)]]
-  ;if ticks > 7120 and ticks <= 7304 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 16)][set pm2.5 workID + (item %3inc table:get poll_scenario 16)]]
-  ;if ticks > 7304 and ticks <= 7484 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 17)][set pm2.5 workID + (item %3inc table:get poll_scenario 17)]]
-  ;if ticks > 7484 and ticks <= 7666 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 18)][set pm2.5 workID + (item %3inc table:get poll_scenario 18)]]
-  ;if ticks > 7666 and ticks <= 7850 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 19)][set pm2.5 workID + (item %3inc table:get poll_scenario 19)]]
-  ;if ticks > 7850 and ticks <= 8034 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 20)][set pm2.5 workID + (item %3inc table:get poll_scenario 20)]]
-  ;if ticks > 8034 and ticks <= 8214 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 21)][set pm2.5 workID + (item %3inc table:get poll_scenario 21)]]
-  ;if ticks > 8214 and ticks <= 8396 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 22)][set pm2.5 workID + (item %3inc table:get poll_scenario 22)]]
-  ;if ticks > 8396 and ticks <= 8580 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 23)][set pm2.5 workID + (item %3inc table:get poll_scenario 23)]]
-  ;if ticks > 8580 and ticks <= 8764 and ticks mod 2 = 0 [ifelse workID < 0 [set pm2.5 (max table:get pm2.5data ticks + 1) + (item %3inc table:get poll_scenario 24)][set pm2.5 workID + (item %3inc table:get poll_scenario 24)]]
-end
 
 
 
@@ -833,16 +781,6 @@ number-dead
 17
 1
 11
-
-CHOOSER
-361
-43
-519
-88
-Scenario-Active
-Scenario-Active
-"Business as Usual" "Increasing"
-0
 
 @#$#@#$#@
 ## WHAT IS IT?
