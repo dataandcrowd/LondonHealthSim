@@ -46,17 +46,22 @@ to go
     sensitivity
     ]
 
+  ;ask patches [ set pcolor scale-color red pm2.5 0 50 ]
+
+
+
+
   district-plot
-  ;dong-plot
   age-plot
-  ;pm10-plot
+  pm10-plot
   update-plots
   tick
   if (ticks = 2922) [stop]
   set date item 0 table:get pm2.5_Westminster (ticks + 1)
   set where item 2 table:get pm2.5_Westminster (ticks + 1)
-  set %riskpop    (count people with [color = red and destinationName != "others"] / count people with [destinationName != "others"]) * 100
-  set number-dead count people with [health <= 10]
+  set %riskpop    (count people with [health < 100] / count people) * 100
+  let temp_dead count people with [health <= 10]
+  set number-dead number-dead + temp_dead
 end
 
 
@@ -214,6 +219,9 @@ to set-airpollution-scenarios
 
 
   set additional_pm25 item 4 table:get poll_scenario scenario_counter
+
+  output-print "Air Pollution Scenarios Added"
+
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -264,7 +272,7 @@ to set-people
         move-to homePatch
         set destinationName "unidentified"
         set destinationPatch "unidentified"
-        set health 300
+        ;set health 300
       ]
       set ageGroupID AgeGroupID + 1
       ]
@@ -272,23 +280,23 @@ to set-people
 end
 
 to setupAgeGroup [ID]
-if ID = 0  [set size 1 set age  5 + random 5 set color orange]
-if ID = 1  [set size 1 set age 10 + random 5 set color orange + 1]
-if ID = 2  [set size 1 set age 15 + random 5 set color orange + 2]
-if ID = 3  [set size 1 set age 20 + random 5 set color turquoise]
-if ID = 4  [set size 1 set age 25 + random 5 set color turquoise]
-if ID = 5  [set size 1 set age 30 + random 5 set color turquoise]
-if ID = 6  [set size 1 set age 35 + random 5 set color turquoise]
-if ID = 7  [set size 1 set age 40 + random 5 set color brown]
-if ID = 8  [set size 1 set age 45 + random 5 set color brown]
-if ID = 9  [set size 1 set age 50 + random 5 set color brown]
-if ID = 10 [set size 1 set age 55 + random 5 set color brown]
-if ID = 11 [set size 1 set age 60 + random 5 set color violet]
-if ID = 12 [set size 1 set age 65 + random 5 set color violet]
-if ID = 13 [set size 1 set age 70 + random 5 set color violet]
-if ID = 14 [set size 1 set age 75 + random 5 set color violet]
-if ID = 15 [set size 1 set age 80 + random 5 set color pink]
-if ID = 16 [set size 1 set age 85 + random 15 set color pink]
+if ID = 0  [set size 1 set age  5 + random 5 set health 299.29 set color orange]
+if ID = 1  [set size 1 set age 10 + random 5 set health 299.39 set color orange + 1]
+if ID = 2  [set size 1 set age 15 + random 5 set health 298.89 set color orange + 2]
+if ID = 3  [set size 1 set age 20 + random 5 set health 298.15 set color turquoise]
+if ID = 4  [set size 1 set age 25 + random 5 set health 297.67 set color turquoise]
+if ID = 5  [set size 1 set age 30 + random 5 set health 297.67 set color turquoise]
+if ID = 6  [set size 1 set age 35 + random 5 set health 297.83 set color turquoise]
+if ID = 7  [set size 1 set age 40 + random 5 set health 297.76 set color brown]
+if ID = 8  [set size 1 set age 45 + random 5 set health 297.06 set color brown]
+if ID = 9  [set size 1 set age 50 + random 5 set health 296.58 set color brown]
+if ID = 10 [set size 1 set age 55 + random 5 set health 295.91 set color brown]
+if ID = 11 [set size 1 set age 60 + random 5 set health 294.61 set color violet]
+if ID = 12 [set size 1 set age 65 + random 5 set health 291.47 set color violet]
+if ID = 13 [set size 1 set age 70 + random 5 set health 290.44 set color violet]
+if ID = 14 [set size 1 set age 75 + random 5 set health 285.87 set color violet]
+if ID = 15 [set size 1 set age 80 + random 5 set health 279.41 set color pink]
+if ID = 16 [set size 1 set age 85 + random 15 set health 269.66 set color pink]
 
 end
 
@@ -410,21 +418,21 @@ to inhalation
 end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 to sensitivity
-  if (pm2.5 >= PM10-parameters) and (health < 300) and (age >= 65) or (age < 15)
+  if (pm2.5 >= PM2.5-Parameter) and (health < 300) ;and (age >= 65); or (age < 15)
      [set health (health - random-float 0.01 * (310 - health))]
-  if (health < 200 and health >= 100) [set color violet]
+  ;if (health < 200 and health >= 100) [set color violet]
   if (health < 100) [set color red]
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 to non-road-effect
-  if(pm2.5 >= PM10-parameters)
-     [set health health - random-float 0.05 * (310 - health)] ;arbitrarily
+  if(pm2.5 >= PM2.5-Parameter)
+     [set health health - random-float 0.1 * (310 - health)] ;arbitrarily
 end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 to road-effect
-  if(pm2.5 * 1.5 >= PM10-parameters)
-     [set health health - random-float 0.08 * (310 - health)] ;arbitrarily
+  if(pm2.5 * 1.5 >= PM2.5-Parameter)
+     [set health health - random-float 0.3 * (310 - health)] ;arbitrarily
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -525,25 +533,23 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 to district-plot
   set-current-plot "District level"
-  set-current-plot-pen "risky"     plot ((count people with [color = violet and destinationName != "others"]) /
-                                        (count people with [destinationName != "others"]) * 100)
-  set-current-plot-pen "dangerous" plot ((count people with [color = red and destinationName != "others"]) /
-                                        (count people with [ destinationName != "others"]) * 100)
+  set-current-plot-pen "risky"     plot ((count people with [health > 100 and health <= 200]) / (count people) * 100)
+  set-current-plot-pen "dangerous" plot ((count people with [health <= 100]) / (count people) * 100)
 end
 
 
 to age-plot
   set-current-plot "By Age Group"
-  set-current-plot-pen "Young"  plot(count people with [age < 15 and color = red and destinationName != "others"]) / (count people with [age < 15 and destinationName != "others"]) * 100
-  set-current-plot-pen "Middle" plot((count people with [age >= 15 and age < 65 and color = red and destinationName != "others"]) / (count people with [age >= 15 and age < 65 and destinationName != "others"]) * 100)
-  set-current-plot-pen "Old"    plot((count people with [age >= 65 and color = red and destinationName != "others"]) / (count people with [age >= 65 and destinationName != "others"]) * 100)
+  set-current-plot-pen "Young"  plot ((count people with [age < 15 and health <= 100]) / (count people) * 100)
+  set-current-plot-pen "Middle" plot ((count people with [age >= 15 and age < 65 and health <= 100]) / (count people) * 100)
+  set-current-plot-pen "Old"    plot ((count people with [age >= 65 and health <= 100]) / (count people) * 100)
 
 end
 
 
 to pm10-plot
-  set-current-plot "PM10 patches"
-  set-current-plot-pen "pm10-shinsa-road"  plot [pm2.5] of patch 24 253
+  set-current-plot "PM2.5 patches"
+  set-current-plot-pen "pm25"  plot [pm2.5] of patch 118 128
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -628,7 +634,7 @@ NIL
 0.0
 10.0
 0.0
-10.0
+100.0
 true
 false
 "" ""
@@ -730,19 +736,12 @@ pm10
 0.0
 10.0
 0.0
-200.0
+10.0
 true
 false
 "" ""
 PENS
-"pm10-shinsa-road" 1.0 0 -7500403 true "" ""
-"pm10-yeoksam1" 1.0 0 -2674135 true "" ""
-"pm10-daechi1" 1.0 0 -13791810 true "" ""
-"pm10-segok" 1.0 0 -6459832 true "" ""
-"pm10-sinsa-road-int" 1.0 0 -955883 true "" ""
-"pm10-sinsa-road-mean" 1.0 0 -1184463 true "" ""
-"pm10-sinsa-road-ma" 1.0 0 -10899396 true "" ""
-"pm10-sinsa-road-kal" 1.0 0 -13840069 true "" ""
+"pm25" 1.0 0 -13840069 true "" ""
 
 CHOOSER
 243
@@ -755,10 +754,10 @@ Scenario
 0
 
 OUTPUT
-402
-407
-705
-528
+399
+152
+702
+284
 12
 
 CHOOSER
@@ -766,10 +765,10 @@ CHOOSER
 97
 394
 142
-PM10-parameters
-PM10-parameters
-35 25 15
-1
+PM2.5-Parameter
+PM2.5-Parameter
+35 15
+0
 
 MONITOR
 402
