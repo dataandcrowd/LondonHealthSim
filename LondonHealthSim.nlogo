@@ -418,21 +418,20 @@ to inhalation
 end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 to sensitivity
-  if (pm2.5 >= PM2.5-Parameter) and (health < 300) ;and (age >= 65); or (age < 15)
-     [set health (health - random-float 0.01 * (310 - health))]
-  ;if (health < 200 and health >= 100) [set color violet]
+  if (pm2.5 >= PM2.5-Parameter) and (health < 300)[set health (health - random-float 0.01 * (310 - health))]
+  if (pm2.5 >= PM2.5-Parameter) and (health < 300) and age >= 65 [set health (health - random-float 0.05 * (310 - health))]
   if (health < 100) [set color red]
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 to non-road-effect
   if(pm2.5 >= PM2.5-Parameter)
-     [set health health - random-float 0.1 * (310 - health)] ;arbitrarily
+     [set health health - random-float 0.05 * (310 - health)] ;arbitrarily
 end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 to road-effect
   if(pm2.5 * 1.5 >= PM2.5-Parameter)
-     [set health health - random-float 0.3 * (310 - health)] ;arbitrarily
+     [set health health - random-float 0.2 * (310 - health)] ;arbitrarily
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
