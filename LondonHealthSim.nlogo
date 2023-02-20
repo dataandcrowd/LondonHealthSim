@@ -431,7 +431,7 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 to road-effect
   if(pm2.5 * 1.5 >= PM2.5-Parameter)
-     [set health health - random-float 0.2 * (310 - health)] ;arbitrarily
+     [set health health - random-float 0.15 * (310 - health)] ;arbitrarily
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
