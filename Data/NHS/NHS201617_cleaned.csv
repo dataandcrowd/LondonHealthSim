@@ -1,0 +1,65 @@
+﻿Code,Description,Mean length of stay,Median length of stay,Mean age,Age0014,Age1564,Age65
+I24,Other acute ischaemic heart diseases,4,2,69,3,7865,"13,939"
+I25,Chronic ischaemic heart disease,5,2,67,88,35743,"52,614"
+J01,Acute sinusitis,2,0,46,57,649,203
+J02,Acute pharyngitis,1,0,35,833,1963,531
+J03,Acute tonsillitis,1,1,14,14662,11321,209
+J04,Acute laryngitis and tracheitis,3,2,50,52,401,190
+J05,Acute obstructive laryngitis [croup] and epiglottitis,1,0,9,3298,318,128
+J06,Acute upper respiratory infections of multiple and unspecified sites,1,0,9,15419,1804,798
+J09,Influenza due to identified zoonotic or pandemic influenza virus,34,34,86,0,0,3
+J10,Influenza due to identified seasonal influenza virus,23,10,61,36,50,135
+J11,"Influenza, virus not identified",6,1,52,14,39,39
+J12,"Viral pneumonia, not elsewhere classified",9,5,61,341,1288,"1,804"
+J13,Pneumonia due to Streptococcus pneumoniae,10,7,63,28,850,978
+J14,Pneumonia due to Haemophilus influenzae,12,8,66,8,143,240
+J15,"Bacterial pneumonia, not elsewhere classified",13,9,67,188,2325,"4,768"
+J16,"Pneumonia due to other infectious organisms, not elsewhere classified",14,9,61,8,42,82
+J17,Pneumonia in diseases classified elsewhere,14,11,66,4,83,154
+J18,"Pneumonia, organism unspecified",8,5,75,2167,56415,"240,132"
+J20,Acute bronchitis,3,1,53,184,611,608
+J21,Acute bronchiolitis,2,1,2,7588,120,68
+J22,Unspecified acute lower respiratory infection,4,2,65,8286,19453,"50,457"
+J30,Vasomotor and allergic rhinitis,1,0,28,738,2069,75
+J31,"Chronic rhinitis, nasopharyngitis and pharyngitis",1,1,45,61,454,124
+J32,Chronic sinusitis,2,1,49,154,3136,992
+J33,Nasal polyp,1,1,51,95,2705,864
+J34,Other disorders of nose and nasal sinuses,1,1,40,564,8400,"1,205"
+J35,Chronic diseases of tonsils and adenoids,1,1,22,4057,2996,463
+J36,Peritonsillar abscess,1,1,34,70,4110,216
+J37,Chronic laryngitis and laryngotracheitis,1,1,53,1,64,12
+J38,"Diseases of vocal cords and larynx, not elsewhere classified",4,1,54,629,4514,"2,717"
+J39,Other diseases of upper respiratory tract,6,2,50,457,1769,"1,101"
+J40,"Bronchitis, not specified as acute or chronic",3,1,61,11,598,624
+J41,Simple and mucopurulent chronic bronchitis,2,1,52,3,9,10
+J42,Unspecified chronic bronchitis,2,1,56,17,63,72
+J43,Emphysema,5,3,68,4,1631,"3,098"
+J44,Other chronic obstructive pulmonary disease,4,3,72,75,31652,"106,769"
+J45,Asthma,2,1,41,9582,32551,"9,055"
+J46,Status asthmaticus,4,2,37,663,2701,367
+J47,Bronchiectasis,8,5,70,274,3033,"10,669"
+J60,Coalworker pneumoconiosis,3,3,72,0,9,43
+J61,Pneumoconiosis due to asbestos and other mineral fibres,4,2,81,0,3,192
+J62,Pneumoconiosis due to dust containing silica,2,1,56,0,9,0
+J63,Pneumoconiosis due to other inorganic dusts,21,5,75,0,1,5
+J64,Unspecified pneumoconiosis,5,4,77,0,3,14
+J66,Airway disease due to specific organic dust,4,3,50,0,5,0
+J67,Hypersensitivity pneumonitis due to organic dust,7,4,62,2,666,642
+J68,"Respiratory conditions due to inhalation of chemicals, gases, fumes and vapours",6,2,54,1,87,36
+J69,Pneumonitis due to solids and liquids,12,8,74,533,10948,"39,545"
+J70,Respiratory conditions due to other external agents,7,5,69,2,131,332
+J80,Adult respiratory distress syndrome,19,12,53,23,107,82
+J81,Pulmonary oedema,5,3,72,8,351,"1,014"
+J82,"Pulmonary eosinophilia, not elsewhere classified",5,3,52,66,3855,"1,203"
+J84,Other interstitial pulmonary diseases,7,4,72,126,3380,"10,236"
+J85,Abscess of lung and mediastinum,14,10,61,36,1025,972
+J86,Pyothorax,14,10,62,97,3101,"3,270"
+J90,"Pleural effusion, not elsewhere classified",5,3,72,123,8559,"24,002"
+J91,Pleural effusion in conditions classified elsewhere,8,5,70,4,270,614
+J92,Pleural plaque,3,2,73,0,94,386
+J93,Pneumothorax,6,3,54,100,7957,"5,288"
+J94,Other pleural conditions,8,5,66,22,851,"1,266"
+J95,"Postprocedural respiratory disorders, not elsewhere classified",6,2,55,169,538,604
+J96,"Respiratory failure, not elsewhere classified",9,5,67,421,7101,"13,238"
+J98,Other respiratory disorders,5,1,57,931,3974,"4,706"
+J99,Respiratory disorders in diseases classified elsewhere,7,4,62,2,90,83
