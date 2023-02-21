@@ -1,5 +1,5 @@
 extensions [gis csv table]
-globals [gu road IMD lc districtPop districtadminCode %riskpop date where number-dead poll_scenario additional_pm25
+globals [gu road IMD lc districtPop districtadminCode %riskpop date where hosp_1564 poll_scenario additional_pm25 hosp_u15 hosp_ov65
          pm2.5_Marylebone pm2.5_Westminster  pm2.5_Camden ;; roadside/kerbside stations
          pm2.5_NKensington pm2.5_Bloomsbury pm2.5_HonorOakPark pm2.5_Bexley pm2.5_Teddington pm2.5_Eltham ;; background stations
          pm2.5_Harlington ;; for intercity commuters (moving back and from max pxcor max pycor)
@@ -60,8 +60,12 @@ to go
   set date item 0 table:get pm2.5_Westminster (ticks + 1)
   set where item 2 table:get pm2.5_Westminster (ticks + 1)
   set %riskpop    (count people with [health < 100] / count people) * 100
-  let temp_dead count people with [health <= 10]
-  set number-dead number-dead + temp_dead
+  let temp_dead count people with [health <= 10 and age >= 15 and age < 64]
+  set hosp_1564 hosp_1564 + temp_dead
+  let temp_u15 count people with [health <= 10 and age < 15]
+  set hosp_u15 hosp_u15 + temp_u15
+  let temp_ov65 count people with [health <= 10 and age >= 65]
+  set hosp_ov65 hosp_ov65 + temp_ov65
 end
 
 
@@ -419,19 +423,20 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 to sensitivity
   if (pm2.5 >= PM2.5-Parameter) and (health < 300)[set health (health - random-float 0.01 * (310 - health))]
-  if (pm2.5 >= PM2.5-Parameter) and (health < 300) and age >= 65 [set health (health - random-float 0.05 * (310 - health))]
+  if (pm2.5 >= PM2.5-Parameter) and (health < 300) and age >= 15 and age < 65 [set health (health - random-float 0.03 * (310 - health))]
+  if (pm2.5 >= PM2.5-Parameter) and (health < 300) and age >= 65 [set health (health - random-float 0.1 * (310 - health))]
   if (health < 100) [set color red]
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 to non-road-effect
   if(pm2.5 >= PM2.5-Parameter)
-     [set health health - random-float 0.05 * (310 - health)] ;arbitrarily
+     [set health health - random-float 0.06 * (310 - health)] ;arbitrarily
 end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 to road-effect
   if(pm2.5 * 1.5 >= PM2.5-Parameter)
-     [set health health - random-float 0.15 * (310 - health)] ;arbitrarily
+     [set health health - random-float 0.12 * (310 - health)] ;arbitrarily
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -686,7 +691,7 @@ TEXTBOX
 26
 336
 44
-*PM10 Trend
+PM2.5 Trend
 14
 0.0
 1
@@ -770,12 +775,34 @@ PM2.5-Parameter
 0
 
 MONITOR
-402
-99
-468
-144
-Hospital
-number-dead
+491
+98
+579
+143
+Hospital1654
+hosp_1564
+17
+1
+11
+
+MONITOR
+406
+98
+484
+143
+Hospital<15
+hosp_u15
+17
+1
+11
+
+MONITOR
+584
+98
+674
+143
+Hospital>65
+hosp_ov65
 17
 1
 11
