@@ -790,7 +790,7 @@ CHOOSER
 Scenario
 Scenario
 "BAU" "INC"
-1
+0
 
 OUTPUT
 395
