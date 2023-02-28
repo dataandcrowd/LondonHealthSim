@@ -1,5 +1,5 @@
 extensions [gis csv table]
-globals [gu road IMD lc districtPop districtadminCode %riskpop date where hosp_1564 poll_scenario additional_pm25 hosp_u15 hosp_ov65 hosp_15641 hosp_u151 hosp_ov651
+globals [gu road IMD lc districtPop districtadminCode %riskpop date where hosp_1564 poll_scenario additional_pm25 hosp_u15 hosp_ov65 hosp_1564new hosp_u15new hosp_ov65new
          pm2.5_Marylebone pm2.5_Westminster  pm2.5_Camden ;; roadside/kerbside stations
          pm2.5_NKensington pm2.5_Bloomsbury pm2.5_HonorOakPark pm2.5_Bexley pm2.5_Teddington pm2.5_Eltham ;; background stations
          pm2.5_Harlington ;; for intercity commuters (moving back and from max pxcor max pycor)
@@ -67,12 +67,12 @@ to go
   let temp_ov65 count people with [health <= 10 and age >= 65 and ticks > 1643 and ticks <= 2300]
   set hosp_ov65 hosp_ov65 + temp_ov65
 
-  let temp_dead1 count people with [health <= 10 and age >= 15 and age < 64 and ticks > 910 and ticks <= 1642]
-set hosp_15641 hosp_15641 + temp_dead1
-let temp_u151 count people with [health <= 10 and age < 15 and ticks > 910 and ticks <= 1642]
-set hosp_u151 hosp_u151 + temp_u151
-let temp_ov651 count people with [health <= 10 and age >= 65 and ticks > 910 and ticks <= 1642]
-set hosp_ov651 hosp_ov651 + temp_ov651
+  let temp_deadnew count people with [health <= 10 and age >= 15 and age < 64 and ticks > 910 and ticks <= 1642]
+  set hosp_1564new hosp_1564new + temp_deadnew
+  let temp_u15new count people with [health <= 10 and age < 15 and ticks > 910 and ticks <= 1642]
+  set hosp_u15new hosp_u15new + temp_u15new
+  let temp_ov65new count people with [health <= 10 and age >= 65 and ticks > 910 and ticks <= 1642]
+  set hosp_ov65new hosp_ov65new + temp_ov65new
 end
 
 
@@ -430,20 +430,20 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 to sensitivity
   if (pm2.5 >= PM2.5-Parameter) and (health < 300)[set health (health - random-float 0.01 * (310 - health))]
-  if (pm2.5 >= PM2.5-Parameter) and (health < 300) and age >= 15 and age < 65 [set health (health - random-float 0.006 * (310 - health))]
-  if (pm2.5 >= PM2.5-Parameter) and (health < 300) and age >= 65 [set health (health - random-float 0.04 * (310 - health))]
+  if (pm2.5 >= PM2.5-Parameter) and (health < 300) and age >= 15 and age < 65 [set health (health - random-float 0.008 * (310 - health))]
+  if (pm2.5 >= PM2.5-Parameter) and (health < 300) and age >= 65 [set health (health - random-float 0.035 * (310 - health))]
   if (health < 100) [set color red]
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 to non-road-effect
   if(pm2.5 >= PM2.5-Parameter)
-     [set health health - random-float 0.066 * (310 - health)] ;arbitrarily
+     [set health health - random-float 0.03 * (310 - health)] ;arbitrarily
 end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 to road-effect
   if(pm2.5 * 1.5 >= PM2.5-Parameter)
-     [set health health - random-float 0.13 * (310 - health)] ;arbitrarily
+     [set health health - random-float 0.08 * (310 - health)] ;arbitrarily
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -478,9 +478,9 @@ to set-inner_south
    if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID][set pm2.5 max table:get pm2.5_HonorOakPark ticks + 1]]
   ]
 
-  if (Scenario = "INC")[
-   if (ticks + 1 mod 2 = 0) [ifelse homeID > 0 [set pm2.5 homeID * 1.30][set pm2.5 (max table:get pm2.5_HonorOakPark ticks + 1) * 1.30]]
-   if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID * 1.30][set pm2.5 (max table:get pm2.5_HonorOakPark ticks + 1) * 1.30]]
+  if (Scenario = "DEC")[
+   if (ticks + 1 mod 2 = 0) [ifelse homeID > 0 [set pm2.5 homeID * 0.60][set pm2.5 (max table:get pm2.5_HonorOakPark ticks + 1) * 0.60]]
+   if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID * 0.60][set pm2.5 (max table:get pm2.5_HonorOakPark ticks + 1) * 0.60]]
   ]
 
   ;additional_pm25
@@ -496,9 +496,9 @@ to set-inner_north
    if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID][set pm2.5 max table:get pm2.5_NKensington ticks + 1]]
   ]
 
-  if (Scenario = "INC")[
-   if (ticks + 1 mod 2 = 0) [ifelse homeID > 0 [set pm2.5 homeID * 1.30][set pm2.5 (max table:get pm2.5_NKensington ticks + 1) * 1.30]]
-   if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID * 1.30][set pm2.5 (max table:get pm2.5_NKensington ticks + 1) * 1.30]]
+  if (Scenario = "DEC")[
+   if (ticks + 1 mod 2 = 0) [ifelse homeID > 0 [set pm2.5 homeID * 0.60][set pm2.5 (max table:get pm2.5_NKensington ticks + 1) * 0.60]]
+   if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID * 0.60][set pm2.5 (max table:get pm2.5_NKensington ticks + 1) * 0.60]]
   ]
 end
 
@@ -511,9 +511,9 @@ to set-inner_centre
    if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID][set pm2.5 max table:get pm2.5_Bloomsbury ticks + 1]]
   ]
 
-  if (Scenario = "INC")[
-   if (ticks + 1 mod 2 = 0) [ifelse homeID > 0 [set pm2.5 homeID * 1.30][set pm2.5 (max table:get pm2.5_Bloomsbury ticks + 1) * 1.30]]
-   if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID * 1.30][set pm2.5 (max table:get pm2.5_Bloomsbury ticks + 1) * 1.30]]
+  if (Scenario = "DEC")[
+   if (ticks + 1 mod 2 = 0) [ifelse homeID > 0 [set pm2.5 homeID * 0.60][set pm2.5 (max table:get pm2.5_Bloomsbury ticks + 1) * 0.60]]
+   if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID * 0.60][set pm2.5 (max table:get pm2.5_Bloomsbury ticks + 1) * 0.60]]
   ]
 
 end
@@ -527,9 +527,9 @@ to set-outer_west
    if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID][set pm2.5 max table:get pm2.5_Teddington ticks + 1]]
   ]
 
-  if (Scenario = "INC")[
-   if (ticks + 1 mod 2 = 0) [ifelse homeID > 0 [set pm2.5 homeID * 1.30][set pm2.5 (max table:get pm2.5_Teddington ticks + 1) * 1.30]]
-   if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID * 1.30][set pm2.5 (max table:get pm2.5_Teddington ticks + 1) * 1.30]]
+  if (Scenario = "DEC")[
+   if (ticks + 1 mod 2 = 0) [ifelse homeID > 0 [set pm2.5 homeID * 0.60][set pm2.5 (max table:get pm2.5_Teddington ticks + 1) * 0.60]]
+   if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID * 0.60][set pm2.5 (max table:get pm2.5_Teddington ticks + 1) * 0.60]]
   ]
 
 end
@@ -543,9 +543,9 @@ to set-outer_east
    if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID][set pm2.5 max table:get pm2.5_Eltham ticks + 1]]
   ]
 
-  if (Scenario = "INC")[
-   if (ticks + 1 mod 2 = 0) [ifelse homeID > 0 [set pm2.5 homeID * 1.30][set pm2.5 (max table:get pm2.5_Eltham ticks + 1) * 1.30]]
-   if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID * 1.30][set pm2.5 (max table:get pm2.5_Eltham ticks + 1) * 1.30]]
+  if (Scenario = "DEC")[
+   if (ticks + 1 mod 2 = 0) [ifelse homeID > 0 [set pm2.5 homeID * 0.60][set pm2.5 (max table:get pm2.5_Eltham ticks + 1) * 0.60]]
+   if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID * 0.60][set pm2.5 (max table:get pm2.5_Eltham ticks + 1) * 0.60]]
   ]
 end
 
@@ -559,9 +559,9 @@ to set-intercity
    if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID][set pm2.5 max table:get pm2.5_Harlington ticks + 1]]
   ]
 
-  if (Scenario = "INC")[
-   if (ticks + 1 mod 2 = 0) [ifelse homeID > 0 [set pm2.5 homeID * 1.30][set pm2.5 (max table:get pm2.5_Harlington ticks + 1) * 1.30]]
-   if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID * 1.30][set pm2.5 (max table:get pm2.5_Harlington ticks + 1) * 1.30]]
+  if (Scenario = "DEC")[
+   if (ticks + 1 mod 2 = 0) [ifelse homeID > 0 [set pm2.5 homeID * 0.60][set pm2.5 (max table:get pm2.5_Harlington ticks + 1) * 0.60]]
+   if ticks       mod 2 = 0 [ifelse workID > 0 [set pm2.5 workID * 0.60][set pm2.5 (max table:get pm2.5_Harlington ticks + 1) * 0.60]]
   ]
 
 end
@@ -652,16 +652,6 @@ NIL
 NIL
 1
 
-CHOOSER
-126
-50
-218
-95
-AC
-AC
-100 150 200
-0
-
 PLOT
 11
 152
@@ -708,16 +698,6 @@ TEXTBOX
 89
 London Health Sim
 18
-0.0
-1
-
-TEXTBOX
-110
-14
-248
-60
-*Adaptive Capacity Change
-14
 0.0
 1
 
@@ -771,7 +751,7 @@ PLOT
 526
 PM2.5 patches
 time
-pm10
+pm2.5
 0.0
 10.0
 0.0
@@ -789,14 +769,14 @@ CHOOSER
 93
 Scenario
 Scenario
-"BAU" "INC"
+"BAU" "DEC"
 0
 
 OUTPUT
-395
-283
-698
-415
+404
+210
+707
+342
 12
 
 CHOOSER
@@ -806,7 +786,7 @@ CHOOSER
 142
 PM2.5-Parameter
 PM2.5-Parameter
-35 15
+25 10 5
 0
 
 MONITOR
@@ -848,7 +828,7 @@ MONITOR
 490
 197
 H<15 2019
-hosp_u151
+hosp_u15new
 17
 1
 11
@@ -859,7 +839,7 @@ MONITOR
 593
 197
 H16-54 2019
-hosp_15641
+hosp_1564new
 17
 1
 11
@@ -870,10 +850,40 @@ MONITOR
 684
 197
 H>15 2019
-hosp_ov651
+hosp_ov65new
 17
 1
 11
+
+CHOOSER
+126
+50
+218
+95
+AC
+AC
+100 150 200
+0
+
+TEXTBOX
+110
+14
+248
+60
+*Adaptive Capacity Change
+14
+0.0
+1
+
+TEXTBOX
+343
+66
+540
+110
+If you are choosing Scenario=DEC\nMake sure you are choosing PM2.5=5
+9
+0.0
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
