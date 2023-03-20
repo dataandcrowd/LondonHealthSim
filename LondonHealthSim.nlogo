@@ -51,9 +51,10 @@ to go
 
 
 
-  district-plot
+  London-plot
   age-plot
   pm10-plot
+  ;district-plot
   update-plots
   tick
   if (ticks = 2922) [stop]
@@ -570,8 +571,8 @@ end
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-to district-plot
-  set-current-plot "District level"
+to London-plot
+  set-current-plot "London"
   set-current-plot-pen "risky"     plot ((count people with [health > 100 and health <= 200]) / (count people) * 100)
   set-current-plot-pen "dangerous" plot ((count people with [health <= 100]) / (count people) * 100)
 end
@@ -579,9 +580,15 @@ end
 
 to age-plot
   set-current-plot "By Age Group"
-  set-current-plot-pen "Young"  plot ((count people with [age < 15 and health <= 100]) / (count people) * 100)
-  set-current-plot-pen "Middle" plot ((count people with [age >= 15 and age < 65 and health <= 100]) / (count people) * 100)
-  set-current-plot-pen "Old"    plot ((count people with [age >= 65 and health <= 100]) / (count people) * 100)
+  set-current-plot-pen "Young"  plot ((count people with [age < 15 and health <= 100]) / (count people with [age < 15]) * 100)
+  set-current-plot-pen "Middle" plot ((count people with [age >= 15 and age < 65 and health <= 100]) / (count people with [age >= 15 and age < 65]) * 100)
+  set-current-plot-pen "Old"    plot ((count people with [age >= 65 and health <= 100]) / (count people with [age >= 65]) * 100)
+end
+
+
+to district-plot
+  set-current-plot "Health Rate by District"
+
 
 end
 
@@ -657,7 +664,7 @@ PLOT
 152
 388
 272
-District level
+London
 NIL
 NIL
 0.0
@@ -884,6 +891,24 @@ If you are choosing Scenario=DEC\nMake sure you are choosing PM2.5=5
 9
 0.0
 1
+
+PLOT
+414
+367
+614
+517
+Health Rate by District
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"Southwark" 1.0 0 -16777216 true "" "plot((count people with [districtname = \"Southwark\" and health <= 100]) / (count people with [districtname = \"Southwark\"]) * 100)"
 
 @#$#@#$#@
 ## WHAT IS IT?
