@@ -54,7 +54,7 @@ to go
   London-plot
   age-plot
   pm10-plot
-  ;district-plot
+  district-plot
   update-plots
   tick
   if (ticks = 2922) [stop]
@@ -895,7 +895,7 @@ If you are choosing Scenario=DEC\nMake sure you are choosing PM2.5=5
 PLOT
 414
 367
-614
+708
 517
 Health Rate by District
 NIL
@@ -909,6 +909,37 @@ false
 "" ""
 PENS
 "Southwark" 1.0 0 -16777216 true "" "plot((count people with [districtname = \"Southwark\" and health <= 100]) / (count people with [districtname = \"Southwark\"]) * 100)"
+"Lambeth" 1.0 0 -7500403 true "" "plot((count people with [districtname = \"Lambeth\" and health <= 100]) / (count people with [districtname = \"Lambeth\"]) * 100)"
+"Wandsworth" 1.0 0 -2674135 true "" "plot((count people with [districtname = \"Wandsworth\" and health <= 100]) / (count people with [districtname = \"Wandsworth\"]) * 100)"
+"Lewisham" 1.0 0 -955883 true "" "plot((count people with [districtname = \"Lewisham\" and health <= 100]) / (count people with [districtname = \"Lewisham\"]) * 100)"
+"Hammersmith and Fulham" 1.0 0 -6459832 true "" "plot((count people with [districtname = \"Hammersmith and Fulham\" and health <= 100]) / (count people with [districtname = \"Hammersmith and Fulham\"]) * 100)"
+"Kensington and Chelsea" 1.0 0 -1184463 true "" "plot((count people with [districtname = \"Kensington and Chelsea\" and health <= 100]) / (count people with [districtname = \"Kensington and Chelsea\"]) * 100)"
+"Haringey" 1.0 0 -10899396 true "" "plot((count people with [districtname = \"Haringey\" and health <= 100]) / (count people with [districtname = \"Haringey\"]) * 100)"
+"Tower Hamlets" 1.0 0 -13840069 true "" "plot((count people with [districtname = \"Tower Hamlets\" and health <= 100]) / (count people with [districtname = \"Tower Hamlets\"]) * 100)"
+"Newham" 1.0 0 -14835848 true "" "plot((count people with [districtname = \"Newham\" and health <= 100]) / (count people with [districtname = \"Newham\"]) * 100)"
+"Westminster" 1.0 0 -11221820 true "" "plot((count people with [districtname = \"Westminster\" and health <= 100]) / (count people with [districtname = \"Westminster\"]) * 100)"
+"Camden" 1.0 0 -13791810 true "" "plot((count people with [districtname = \"Camden\" and health <= 100]) / (count people with [districtname = \"Camden\"]) * 100)"
+"Islington" 1.0 0 -13345367 true "" "plot((count people with [districtname = \"Islington\" and health <= 100]) / (count people with [districtname = \"Islington\"]) * 100)"
+"Hackney" 1.0 0 -8630108 true "" "plot((count people with [districtname = \"Hackney\" and health <= 100]) / (count people with [districtname = \"Hackney\"]) * 100)"
+"Enfield" 1.0 0 -5825686 true "" "plot((count people with [districtname = \"Enfield\" and health <= 100]) / (count people with [districtname = \"Enfield\"]) * 100)"
+"Waltham Forest" 1.0 0 -2064490 true "" "plot((count people with [districtname = \"Waltham Forest\" and health <= 100]) / (count people with [districtname = \"Waltham Forest\"]) * 100)"
+"Barnet" 1.0 0 -16777216 true "" "plot((count people with [districtname = \"Barnet\" and health <= 100]) / (count people with [districtname = \"Barnet\"]) * 100)"
+"Brent" 1.0 0 -16777216 true "" "plot((count people with [districtname = \"Brent\" and health <= 100]) / (count people with [districtname = \"Brent\"]) * 100)"
+"Harrow" 1.0 0 -16777216 true "" "plot((count people with [districtname = \"Harrow\" and health <= 100]) / (count people with [districtname = \"Harrow\"]) * 100)"
+"Ealing" 1.0 0 -16777216 true "" "plot((count people with [districtname = \"Ealing\" and health <= 100]) / (count people with [districtname = \"Ealing\"]) * 100)"
+"Hounslow" 1.0 0 -16777216 true "" "plot((count people with [districtname = \"Hounslow\" and health <= 100]) / (count people with [districtname = \"Hounslow\"]) * 100)"
+"Hillingdon" 1.0 0 -16777216 true "" "plot((count people with [districtname = \"Hillingdon\" and health <= 100]) / (count people with [districtname = \"Hillingdon\"]) * 100)"
+"Richmond upon Thames" 1.0 0 -16777216 true "" "plot((count people with [districtname = \"Richmond upon Thames\" and health <= 100]) / (count people with [districtname = \"Richmond upon Thames\"]) * 100)"
+"Kingston upon Thames" 1.0 0 -16777216 true "" "plot((count people with [districtname = \"Kingston upon Thames\" and health <= 100]) / (count people with [districtname = \"Kingston upon Thames\"]) * 100)"
+"Merton" 1.0 0 -16777216 true "" "plot((count people with [districtname = \"Merton\" and health <= 100]) / (count people with [districtname = \"Merton\"]) * 100)"
+"Sutton" 1.0 0 -16777216 true "" "plot((count people with [districtname = \"Sutton\" and health <= 100]) / (count people with [districtname = \"Sutton\"]) * 100)"
+"Redbridge" 1.0 0 -16777216 true "" "plot((count people with [districtname = \"Redbridge\" and health <= 100]) / (count people with [districtname = \"Redbridge\"]) * 100)"
+"Barking and Dagenham" 1.0 0 -16777216 true "" "plot((count people with [districtname = \"Barking and Dagenham\" and health <= 100]) / (count people with [districtname = \"Barking and Dagenham\"]) * 100)"
+"Havering" 1.0 0 -16777216 true "" "plot((count people with [districtname = \"Havering\" and health <= 100]) / (count people with [districtname = \"Havering\"]) * 100)"
+"Greenwich" 1.0 0 -16777216 true "" "plot((count people with [districtname = \"Greenwich\" and health <= 100]) / (count people with [districtname = \"Greenwich\"]) * 100)"
+"Bexley" 1.0 0 -16777216 true "" "plot((count people with [districtname = \"Bexley\" and health <= 100]) / (count people with [districtname = \"Bexley\"]) * 100)"
+"Bromley" 1.0 0 -16777216 true "" "plot((count people with [districtname = \"Bromley\" and health <= 100]) / (count people with [districtname = \"Bromley\"]) * 100)"
+"Croydon" 1.0 0 -16777216 true "" "plot((count people with [districtname = \"Croydon\" and health <= 100]) / (count people with [districtname = \"Croydon\"]) * 100)"
 
 @#$#@#$#@
 ## WHAT IS IT?
