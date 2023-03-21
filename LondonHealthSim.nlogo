@@ -46,15 +46,6 @@ to go
     sensitivity
     ]
 
-  ;ask patches [ set pcolor scale-color red pm2.5 0 50 ]
-
-
-
-
-  London-plot
-  age-plot
-  pm10-plot
-  district-plot
   update-plots
   tick
   if (ticks = 2922) [stop]
@@ -567,33 +558,6 @@ to set-intercity
 
 end
 
-
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-to London-plot
-  set-current-plot "London"
-  set-current-plot-pen "dangerous" plot ((count people with [health <= 100]) / (count people) * 100)
-end
-
-
-to age-plot
-  set-current-plot "By Age Group"
-  set-current-plot-pen "Young"  plot ((count people with [age < 15 and health <= 100]) / (count people with [age < 15]) * 100)
-  set-current-plot-pen "Middle" plot ((count people with [age >= 15 and age < 65 and health <= 100]) / (count people with [age >= 15 and age < 65]) * 100)
-  set-current-plot-pen "Old"    plot ((count people with [age >= 65 and health <= 100]) / (count people with [age >= 65]) * 100)
-end
-
-
-to district-plot
-  set-current-plot "Health Rate by District"
-end
-
-
-to pm10-plot
-  set-current-plot "PM2.5 patches"
-  set-current-plot-pen "pm25"  plot [pm2.5] of patch 118 128
-end
 @#$#@#$#@
 GRAPHICS-WINDOW
 751
@@ -667,12 +631,12 @@ NIL
 0.0
 10.0
 0.0
-100.0
+10.0
 true
 false
 "" ""
 PENS
-"dangerous" 1.0 0 -2674135 true "" ""
+"dangerous" 1.0 0 -2674135 true "" "plot ((count people with [health <= 100]) / (count people) * 100)"
 
 PLOT
 11
@@ -690,9 +654,9 @@ true
 false
 "" ""
 PENS
-"Young" 1.0 0 -955883 true "" ""
-"Middle" 1.0 0 -14835848 true "" ""
-"Old" 1.0 0 -6459832 true "" ""
+"Young" 1.0 0 -955883 true "" "plot ((count people with [age < 15 and health <= 100]) / (count people with [age < 15]) * 100)"
+"Middle" 1.0 0 -14835848 true "" "plot ((count people with [age >= 15 and age < 65 and health <= 100]) / (count people with [age >= 15 and age < 65]) * 100)"
+"Old" 1.0 0 -6459832 true "" "plot ((count people with [age >= 65 and health <= 100]) / (count people with [age >= 65]) * 100)"
 
 TEXTBOX
 888
@@ -763,7 +727,7 @@ true
 false
 "" ""
 PENS
-"pm25" 1.0 0 -13840069 true "" ""
+"pm25" 1.0 0 -13840069 true "" "plot [pm2.5] of patch 118 128"
 
 CHOOSER
 243
