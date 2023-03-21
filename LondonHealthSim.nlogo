@@ -573,7 +573,6 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 to London-plot
   set-current-plot "London"
-  set-current-plot-pen "risky"     plot ((count people with [health > 100 and health <= 200]) / (count people) * 100)
   set-current-plot-pen "dangerous" plot ((count people with [health <= 100]) / (count people) * 100)
 end
 
@@ -588,8 +587,6 @@ end
 
 to district-plot
   set-current-plot "Health Rate by District"
-
-
 end
 
 
@@ -675,7 +672,6 @@ true
 false
 "" ""
 PENS
-"risky" 1.0 0 -8630108 true "" ""
 "dangerous" 1.0 0 -2674135 true "" ""
 
 PLOT
