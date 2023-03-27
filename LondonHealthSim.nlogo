@@ -357,13 +357,18 @@ end
 to update-interface
   set date item 0 table:get pm2.5_Westminster (ticks + 1)
   set where item 2 table:get pm2.5_Westminster (ticks + 1)
-  set %riskpop    (count people with [health < 100] / count people) * 100
+  set %riskpop (count people with [health < 100] / count people) * 100
   let temp_dead count people with [health <= 10 and age >= 15 and age < 64 and ticks > 1643 and ticks <= 2300]
   set hosp_1564 hosp_1564 + temp_dead
   let temp_u15 count people with [health <= 10 and age < 15 and ticks > 1643 and ticks <= 2300]
   set hosp_u15 hosp_u15 + temp_u15
   let temp_ov65 count people with [health <= 10 and age >= 65 and ticks > 1643 and ticks <= 2300]
   set hosp_ov65 hosp_ov65 + temp_ov65
+
+  file-open "hospital2019_output.txt"
+  file-print (list "" ticks date where hosp_u15 hosp_1564 hosp_ov65 "")
+  file-close
+
 
   let temp_deadnew count people with [health <= 10 and age >= 15 and age < 64 and ticks > 910 and ticks <= 1642]
   set hosp_1564new hosp_1564new + temp_deadnew
@@ -419,8 +424,8 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 to sensitivity
   if (pm2.5 >= PM2.5-Parameter) and (health < 300)[set health (health - random-float 0.01 * (310 - health))]
-  if (pm2.5 >= PM2.5-Parameter) and (health < 300) and age >= 15 and age < 65 [set health (health - random-float 0.008 * (310 - health))]
-  if (pm2.5 >= PM2.5-Parameter) and (health < 300) and age >= 65 [set health (health - random-float 0.035 * (310 - health))]
+  ;if (pm2.5 >= PM2.5-Parameter) and (health < 300) and age >= 15 and age < 65 [set health (health - random-float 0.002 * (310 - health))]
+  if (pm2.5 >= PM2.5-Parameter) and (health < 300) and age >= 65 [set health (health - random-float 0.015 * (310 - health))]
   if (health < 100) [set color red]
 end
 
@@ -432,7 +437,7 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 to road-effect
   if(pm2.5 * 1.5 >= PM2.5-Parameter)
-     [set health health - random-float 0.08 * (310 - health)] ;arbitrarily
+     [set health health - random-float 0.05 * (310 - health)] ;arbitrarily
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -565,49 +570,61 @@ to plot-age
   set-current-plot-pen "Young"  plot ((count people with [age < 15 and health <= 100]) / (count people with [age < 15]) * 100)
   set-current-plot-pen "Middle" plot ((count people with [age >= 15 and age < 65 and health <= 100]) / (count people with [age >= 15 and age < 65]) * 100)
   set-current-plot-pen "Old"    plot ((count people with [age >= 65 and health <= 100]) / (count people with [age >= 65]) * 100)
+
+
+  let at_risk_pop (count people with [health <= 100]) / (count people) * 100
+  let at_risk_15 (count people with [age < 15 and health <= 100]) / (count people with [age < 15]) * 100
+  let at_risk_1564 (count people with [age >= 15 and age < 65 and health <= 100]) / (count people with [age >= 15 and age < 65]) * 100
+  let at_risk_65 (count people with [age >= 65 and health <= 100]) / (count people with [age >= 65]) * 100
+
+  file-open "atrisk_output.txt"
+  file-print (list "" ticks at_risk_pop at_risk_15 at_risk_1564 at_risk_65 "")
+  file-close
 end
 
  to plot-district
   let Southwark_csv (count people with [districtname = "Southwark" and health <= 100]) / (count people with [districtname = "Southwark"]) * 100
-  let Lambeth_csv (count people with [districtname = "Lambeth" and health <= 100]) / (count people with [districtname = "Lambeth"]) * 100
+  let Lambeth_csv   (count people with [districtname = "Lambeth" and health <= 100]) / (count people with [districtname = "Lambeth"]) * 100
+  let Wandsworth_csv (count people with [districtname = "Wandsworth" and health <= 100]) / (count people with [districtname = "Wandsworth"]) * 100
+  let Lewisham_csv   (count people with [districtname = "Lewisham" and health <= 100]) / (count people with [districtname = "Lewisham"]) * 100
+  let Newham_csv     (count people with [districtname = "Newham" and health <= 100]) / (count people with [districtname = "Newham"]) * 100
+  let Haringey_csv   (count people with [districtname = "Haringey" and health <= 100]) / (count people with [districtname = "Haringey"]) * 100
+  let Westminster_csv (count people with [districtname = "Westminster" and health <= 100]) / (count people with [districtname = "Westminster"]) * 100
+  let Camden_csv     (count people with [districtname = "Camden" and health <= 100]) / (count people with [districtname = "Camden"]) * 100
+  let Islington_csv  (count people with [districtname = "Islington" and health <= 100]) / (count people with [districtname = "Islington"]) * 100
+  let Hackney_csv    (count people with [districtname = "Hackney" and health <= 100]) / (count people with [districtname = "Hackney"]) * 100
+  let Enfield_csv    (count people with [districtname = "Enfield" and health <= 100]) / (count people with [districtname = "Enfield"]) * 100
+  let Barnet_csv     (count people with [districtname = "Barnet" and health <= 100]) / (count people with [districtname = "Barnet"]) * 100
+  let Brent_csv      (count people with [districtname = "Brent" and health <= 100]) / (count people with [districtname = "Brent"]) * 100
+  let Harrow_csv     (count people with [districtname = "Harrow" and health <= 100]) / (count people with [districtname = "Harrow"]) * 100
+  let Ealing_csv     (count people with [districtname = "Ealing" and health <= 100]) / (count people with [districtname = "Ealing"]) * 100
+  let Hounslow_csv   (count people with [districtname = "Hounslow" and health <= 100]) / (count people with [districtname = "Hounslow"]) * 100
+  let Hillingdon_csv (count people with [districtname = "Hillingdon" and health <= 100]) / (count people with [districtname = "Hillingdon"]) * 100
+  let Merton_csv    (count people with [districtname = "Merton" and health <= 100]) / (count people with [districtname = "Merton"]) * 100
+  let Sutton_csv    (count people with [districtname = "Sutton" and health <= 100]) / (count people with [districtname = "Sutton"]) * 100
+  let Redbridge_csv (count people with [districtname = "Redbridge" and health <= 100]) / (count people with [districtname = "Redbridge"]) * 100
+  let Havering_csv  (count people with [districtname = "Havering" and health <= 100]) / (count people with [districtname = "Havering"]) * 100
+  let Greenwich_csv (count people with [districtname = "Greenwich" and health <= 100]) / (count people with [districtname = "Greenwich"]) * 100
+  let Bexley_csv    (count people with [districtname = "Bexley" and health <= 100]) / (count people with [districtname = "Bexley"]) * 100
+  let Bromley_csv   (count people with [districtname = "Bromley" and health <= 100]) / (count people with [districtname = "Bromley"]) * 100
+  let Croydon_csv   (count people with [districtname = "Croydon" and health <= 100]) / (count people with [districtname = "Croydon"]) * 100
+  let Tower_Hamlets_csv (count people with [districtname = "Tower Hamlets" and health <= 100]) / (count people with [districtname = "Tower Hamlets"]) * 100
+  let Waltham_Forest_csv (count people with [districtname = "Waltham Forest" and health <= 100]) / (count people with [districtname = "Waltham Forest"]) * 100
+  let Richmond_upon_Thames_csv (count people with [districtname = "Richmond upon Thames" and health <= 100]) / (count people with [districtname = "Richmond upon Thames"]) * 100
+  let Kingston_upon_Thames_csv (count people with [districtname = "Kingston upon Thames" and health <= 100]) / (count people with [districtname = "Kingston upon Thames"]) * 100
+  let Hammersmith_and_Fulham_csv (count people with [districtname = "Hammersmith and Fulham" and health <= 100]) / (count people with [districtname = "Hammersmith and Fulham"]) * 100
+  let Kensington_and_Chelsea_csv (count people with [districtname = "Kensington and Chelsea" and health <= 100]) / (count people with [districtname = "Kensington and Chelsea"]) * 100
+  let Barking_and_Dagenham_csv (count people with [districtname = "Barking and Dagenham" and health <= 100]) / (count people with [districtname = "Barking and Dagenham"]) * 100
 
   file-open "borough_output.txt"
-  file-print (list "" ticks "Southwark" Southwark_csv "Lambeth" Lambeth_csv "")
+  file-print (list "" ticks "Southwark" Southwark_csv "Lambeth" Lambeth_csv "Wandsworth" Wandsworth_csv
+    "Lewisham" Lewisham_csv "Newham" Newham_csv "Haringey" Haringey_csv "Westminster" Westminster_csv "Camden" Camden_csv
+    "Islington" Islington_csv "Hackney" Hackney_csv "Enfield" Enfield_csv "Barnet" Barnet_csv "Brent" Brent_csv "Harrow" Harrow_csv
+    "Ealing" Ealing_csv "Hounslow" Hounslow_csv "Hillingdon" Hillingdon_csv "Merton" Merton_csv "Sutton" Sutton_csv "Redbridge" Redbridge_csv
+    "Havering" Havering_csv "Greenwich" Greenwich_csv "Bexley" Bexley_csv "Bromley" Bromley_csv "Croydon" Croydon_csv "Tower Hamlets" Tower_Hamlets_csv
+    "Waltham Forest" Waltham_Forest_csv "Richmond upon Thames" Richmond_upon_Thames_csv "Kingston upon Thames" Kingston_upon_Thames_csv
+    "Kensington and Chelsea" Kensington_and_Chelsea_csv "Barking and Dagenham" Barking_and_Dagenham_csv "")
   file-close
-
-;set-current-plot-pen "Southwark" plot((count people with [districtname = "Southwark" and health <= 100]) / (count people with [districtname = "Southwark"]) * 100)
- ;set-current-plot-pen "Lambeth" plot((count people with [districtname = "Lambeth" and health <= 100]) / (count people with [districtname = "Lambeth"]) * 100)
- ;set-current-plot-pen "Wandsworth" plot((count people with [districtname = "Wandsworth" and health <= 100]) / (count people with [districtname = "Wandsworth"]) * 100)
- ;set-current-plot-pen "Lewisham" plot((count people with [districtname = "Lewisham" and health <= 100]) / (count people with [districtname = "Lewisham"]) * 100)
- ;set-current-plot-pen "Hammersmith and Fulham" plot((count people with [districtname = "Hammersmith and Fulham" and health <= 100]) / (count people with [districtname = "Hammersmith and Fulham"]) * 100)
- ;set-current-plot-pen "Kensington and Chelsea" plot((count people with [districtname = "Kensington and Chelsea" and health <= 100]) / (count people with [districtname = "Kensington and Chelsea"]) * 100)
- ;set-current-plot-pen "Haringey" plot((count people with [districtname = "Haringey" and health <= 100]) / (count people with [districtname = "Haringey"]) * 100)
- ;set-current-plot-pen "Tower Hamlets" plot((count people with [districtname = "Tower Hamlets" and health <= 100]) / (count people with [districtname = "Tower Hamlets"]) * 100)
- ;set-current-plot-pen "Newham" plot((count people with [districtname = "Newham" and health <= 100]) / (count people with [districtname = "Newham"]) * 100)
- ;set-current-plot-pen "Westminster" plot((count people with [districtname = "Westminster" and health <= 100]) / (count people with [districtname = "Westminster"]) * 100)
- ;set-current-plot-pen "Camden" plot((count people with [districtname = "Camden" and health <= 100]) / (count people with [districtname = "Camden"]) * 100)
- ;set-current-plot-pen "Islington" plot((count people with [districtname = "Islington" and health <= 100]) / (count people with [districtname = "Islington"]) * 100)
- ;set-current-plot-pen "Hackney" plot((count people with [districtname = "Hackney" and health <= 100]) / (count people with [districtname = "Hackney"]) * 100)
- ;set-current-plot-pen "Enfield" plot((count people with [districtname = "Enfield" and health <= 100]) / (count people with [districtname = "Enfield"]) * 100)
- ;set-current-plot-pen "Waltham Forest" plot((count people with [districtname = "Waltham Forest" and health <= 100]) / (count people with [districtname = "Waltham Forest"]) * 100)
- ;set-current-plot-pen "Barnet" plot((count people with [districtname = "Barnet" and health <= 100]) / (count people with [districtname = "Barnet"]) * 100)
- ;set-current-plot-pen "Brent" plot((count people with [districtname = "Brent" and health <= 100]) / (count people with [districtname = "Brent"]) * 100)
- ;set-current-plot-pen "Harrow" plot((count people with [districtname = "Harrow" and health <= 100]) / (count people with [districtname = "Harrow"]) * 100)
- ;set-current-plot-pen "Ealing" plot((count people with [districtname = "Ealing" and health <= 100]) / (count people with [districtname = "Ealing"]) * 100)
- ;set-current-plot-pen "Hounslow" plot((count people with [districtname = "Hounslow" and health <= 100]) / (count people with [districtname = "Hounslow"]) * 100)
- ;set-current-plot-pen "Hillingdon" plot((count people with [districtname = "Hillingdon" and health <= 100]) / (count people with [districtname = "Hillingdon"]) * 100)
- ;set-current-plot-pen "Richmond upon Thames" plot((count people with [districtname = "Richmond upon Thames" and health <= 100]) / (count people with [districtname = "Richmond upon Thames"]) * 100)
- ;set-current-plot-pen "Kingston upon Thames" plot((count people with [districtname = "Kingston upon Thames" and health <= 100]) / (count people with [districtname = "Kingston upon Thames"]) * 100)
- ;set-current-plot-pen "Merton" plot((count people with [districtname = "Merton" and health <= 100]) / (count people with [districtname = "Merton"]) * 100)
- ;set-current-plot-pen "Sutton" plot((count people with [districtname = "Sutton" and health <= 100]) / (count people with [districtname = "Sutton"]) * 100)
- ;set-current-plot-pen "Redbridge" plot((count people with [districtname = "Redbridge" and health <= 100]) / (count people with [districtname = "Redbridge"]) * 100)
- ;set-current-plot-pen "Barking and Dagenham" plot((count people with [districtname = "Barking and Dagenham" and health <= 100]) / (count people with [districtname = "Barking and Dagenham"]) * 100)
- ;set-current-plot-pen "Havering" plot((count people with [districtname = "Havering" and health <= 100]) / (count people with [districtname = "Havering"]) * 100)
- ;set-current-plot-pen "Greenwich" plot((count people with [districtname = "Greenwich" and health <= 100]) / (count people with [districtname = "Greenwich"]) * 100)
- ;set-current-plot-pen "Bexley" plot((count people with [districtname = "Bexley" and health <= 100]) / (count people with [districtname = "Bexley"]) * 100)
- ;set-current-plot-pen "Bromley" plot((count people with [districtname = "Bromley" and health <= 100]) / (count people with [districtname = "Bromley"]) * 100)
- ;set-current-plot-pen "Croydon" plot((count people with [districtname = "Croydon" and health <= 100]) / (count people with [districtname = "Croydon"]) * 100)
-
  end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -1274,23 +1291,6 @@ NetLogo 6.3.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
-<experiments>
-  <experiment name="experiment" repetitions="1" runMetricsEveryStep="true">
-    <setup>setup</setup>
-    <go>go</go>
-    <timeLimit steps="100"/>
-    <metric>(count people with [health &lt;= 100]) / (count people) * 100</metric>
-    <enumeratedValueSet variable="Scenario">
-      <value value="&quot;BAU&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="AC">
-      <value value="100"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="PM2.5-Parameter">
-      <value value="25"/>
-    </enumeratedValueSet>
-  </experiment>
-</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default
