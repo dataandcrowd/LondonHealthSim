@@ -365,7 +365,7 @@ to update-interface
   let temp_ov65 count people with [health <= 10 and age >= 65 and ticks > 1643 and ticks <= 2300]
   set hosp_ov65 hosp_ov65 + temp_ov65
 
-  file-open "hospital2019_output.txt"
+  file-open "hospital_calibration.txt"
   file-print (list "" ticks date where hosp_u15 hosp_1564 hosp_ov65 "")
   file-close
 
@@ -1291,6 +1291,26 @@ NetLogo 6.3.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
+<experiments>
+  <experiment name="cali" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <exitCondition>ticks = 2300</exitCondition>
+    <metric>%riskpop</metric>
+    <metric>hosp_u15</metric>
+    <metric>hosp_1564</metric>
+    <metric>hosp_ov65</metric>
+    <enumeratedValueSet variable="Scenario">
+      <value value="&quot;BAU&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="AC">
+      <value value="100"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="PM2.5-Parameter">
+      <value value="25"/>
+    </enumeratedValueSet>
+  </experiment>
+</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default
