@@ -424,7 +424,7 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 to sensitivity
   if (pm2.5 >= PM2.5-Parameter) and (health < 300)[set health (health - random-float 0.01 * (310 - health))]
-  ;if (pm2.5 >= PM2.5-Parameter) and (health < 300) and age >= 15 and age < 65 [set health (health - random-float 0.002 * (310 - health))]
+  if (pm2.5 >= PM2.5-Parameter) and (health < 300) and age >= 15 and age < 65 [set health (health - random-float 0.001 * (310 - health))]
   if (pm2.5 >= PM2.5-Parameter) and (health < 300) and age >= 65 [set health (health - random-float 0.015 * (310 - health))]
   if (health < 100) [set color red]
 end
@@ -648,8 +648,8 @@ GRAPHICS-WINDOW
 300
 0
 230
-1
-1
+0
+0
 1
 half day
 30.0
