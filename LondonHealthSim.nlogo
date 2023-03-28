@@ -37,7 +37,7 @@ to go
   plot-london
   plot-age
   plot-district
-  update-plots
+  ;update-plots
   tick
   if (ticks = 2922) [stop]
   ;;if (ticks = 100)[export-plot "London" "London.csv"]
@@ -365,7 +365,7 @@ to update-interface
   let temp_ov65 count people with [health <= 10 and age >= 65 and ticks > 1643 and ticks <= 2300]
   set hosp_ov65 hosp_ov65 + temp_ov65
 
-  file-open (word "hospital_calibration " random-float 1.0 ".txt")
+  file-open "hospital_calibration.txt"
   file-print (list "" ticks date where hosp_u15 hosp_1564 hosp_ov65 "")
   file-close
 
@@ -577,7 +577,7 @@ to plot-age
   let at_risk_1564 (count people with [age >= 15 and age < 65 and health <= 100]) / (count people with [age >= 15 and age < 65]) * 100
   let at_risk_65 (count people with [age >= 65 and health <= 100]) / (count people with [age >= 65]) * 100
 
-  file-open (word "atrisk_output " random-float 1.0 ".txt")
+  file-open "atrisk_output.txt"
   file-print (list "" ticks at_risk_pop at_risk_15 at_risk_1564 at_risk_65 "")
   file-close
 end
@@ -616,7 +616,7 @@ end
   let Kensington_and_Chelsea_csv (count people with [districtname = "Kensington and Chelsea" and health <= 100]) / (count people with [districtname = "Kensington and Chelsea"]) * 100
   let Barking_and_Dagenham_csv (count people with [districtname = "Barking and Dagenham" and health <= 100]) / (count people with [districtname = "Barking and Dagenham"]) * 100
 
-  file-open (word "borough_output " random-float 1.0 ".txt")
+  file-open "borough_output.txt"
   file-print (list "" ticks "Southwark" Southwark_csv "Lambeth" Lambeth_csv "Wandsworth" Wandsworth_csv
     "Lewisham" Lewisham_csv "Newham" Newham_csv "Haringey" Haringey_csv "Westminster" Westminster_csv "Camden" Camden_csv
     "Islington" Islington_csv "Hackney" Hackney_csv "Enfield" Enfield_csv "Barnet" Barnet_csv "Brent" Brent_csv "Harrow" Harrow_csv
