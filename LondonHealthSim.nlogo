@@ -365,9 +365,6 @@ to update-interface
   let temp_ov65 count people with [health <= 10 and age >= 65 and ticks > 1643 and ticks <= 2300]
   set hosp_ov65 hosp_ov65 + temp_ov65
 
-  file-open "hospital_calibration.txt"
-  file-print (list "" ticks date where hosp_u15 hosp_1564 hosp_ov65 "")
-  file-close
 
 
   let temp_deadnew count people with [health <= 10 and age >= 15 and age < 64 and ticks > 910 and ticks <= 1642]
@@ -376,6 +373,14 @@ to update-interface
   set hosp_u15new hosp_u15new + temp_u15new
   let temp_ov65new count people with [health <= 10 and age >= 65 and ticks > 910 and ticks <= 1642]
   set hosp_ov65new hosp_ov65new + temp_ov65new
+
+    file-open "hospital_calibration.txt"
+  if ticks = 1200 [
+    file-print (list "" ticks date hosp_u15new hosp_1564new hosp_ov65new "")
+    file-close
+  ]
+
+
 end
 
 to set-at-hospital
