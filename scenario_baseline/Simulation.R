@@ -54,7 +54,7 @@ df %>%
   ggplot(aes(x = ticks, y = value, colour = type)) +
   geom_line() +
   facet_grid(vars(type), scales = "free") +
-  labs(x = "", y = "At-risk rate") +
+  labs(x = "", y = "At-risk rate(%)") +
   geom_hline(yintercept = 10, linetype=2) +
   scale_x_continuous(breaks = c(0, 1000, 2000, 2922), labels = c("Jan 2018", "May 2019", "Oct 2020", "Dec 2021")) +
   theme_bw() +
@@ -93,6 +93,7 @@ df_borough_fin %>%
   geom_line() +
   facet_wrap(~type) +
   geom_hline(yintercept = 10, linetype=2) +
+  labs(x = "", y = "At-risk rate(%)") +
   scale_x_continuous(breaks = c(0, 1000, 2000, 2922), labels = c("Jan 2018", "May 2019", "Oct 2020", "Dec 2021")) +
   theme_bw() +
   theme(legend.position = "none",
