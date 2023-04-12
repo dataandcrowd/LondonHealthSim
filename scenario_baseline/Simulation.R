@@ -61,7 +61,7 @@ df %>%
   theme(legend.position = "none",
         text = element_text(size=13))
 
-ggsave("plot.jpg", width = 7, height = 5)
+ggsave("at-risk.jpg", width = 7, height = 5)
 
 
 # Read multiple text files
