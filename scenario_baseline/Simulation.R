@@ -80,7 +80,13 @@ df_borough_odd %>% stack %>% with(unique(values)) -> london_districts
 colnames(df_borough_even) <- london_districts
 
 df %>% select(1:3) %>% 
-  bind_cols(df_borough_even) -> df_borough_fin
+  bind_cols(df_borough_even) %>% 
+  rename(`B&G` = Barking_and_Dagenham,
+         `Tower Hamlets` = Tower_Hamlets,
+         `Waltham Forest` = Waltham_Forest,
+         Richmond = Richmond_upon_Thames,
+         Kingston = Kingston_upon_Thames,
+         Kensington = Kensington_and_Chelsea) -> df_borough_fin
 
 
 df_borough_fin %>% 
@@ -98,6 +104,6 @@ df_borough_fin %>%
   theme_bw() +
   theme(legend.position = "none",
         text = element_text(size=13),
-        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+        axis.text.x = element_text(size = 7, angle = 15, hjust=.5))#, vjust = 0.5, hjust=1))
 
-ggsave("borough.jpg", width = 10, height = 10)
+ggsave("bb.jpg", width = 9, height = 9)

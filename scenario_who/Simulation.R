@@ -2,7 +2,7 @@ library(tidyverse)
 library(data.table)
 
 # Read multiple text files
-list_files <- list.files(pattern = "atrisk")
+list_files <- list.files(pattern = "atrisk_scenario")
 rbindlist(lapply(list_files, read.table), idcol = "id") %>% 
   as_tibble %>% 
   select(-c(V1, V8)) %>% 
@@ -12,6 +12,19 @@ rbindlist(lapply(list_files, read.table), idcol = "id") %>%
          und15 = V5,
          btw1564 = V6,
          ov65 = V7) -> df
+
+#
+list_files1 <- list.files(pattern = "atrisk_output")
+rbindlist(lapply(list_files1, read.table), idcol = "id") %>% 
+  as_tibble %>% 
+  select(-c(V1, V8)) %>% 
+  rename(ticks = V2,
+         date = V3,
+         total = V4,
+         und15 = V5,
+         btw1564 = V6,
+         ov65 = V7) -> df_baseline
+#
 
 df %>% dim
 
@@ -27,45 +40,38 @@ df %>%
   pull(date)
 
 
+
+##############
+# df %>% 
+#   select(-id) %>% 
+#   group_by(ticks) %>% 
+#   summarise(across(where(is.numeric), list(mean = mean))) %>% 
+#   rename(Total = total_mean,
+#          `<15` = und15_mean,
+#          `15-64` = btw1564_mean,
+#          `>65` = ov65_mean) %>% 
+#   pivot_longer(!ticks, names_to = "type", values_to = "value") %>% 
+#   mutate(type = factor(type, levels = c("Total", "<15", "15-64", ">65"))) -> df_clean
+
+df_baseline %>% 
+  select(-c(id, ticks, date)) %>% 
+  pivot_longer(everything(), names_to = "type", values_to = "value") %>% 
+  group_by(type) %>% 
+  summarise(across(where(is.numeric), list(mean = mean))) 
+
 df %>% 
-  pivot_longer(!c(id, date, ticks), names_to = "type", values_to = "value") %>%
-  filter(id == 1) %>% 
-  ggplot(aes(x = ticks, y = value, colour = type)) +
-  geom_line()+
-  xlim(800,1200) +
-  facet_wrap(~type, scales = "free") +
-  labs(x = "", y = "At-risk rate") +
-  theme_bw() +
-  theme(legend.position = "bottom")
+  select(-c(id, ticks, date)) %>% 
+  pivot_longer(everything(), names_to = "type", values_to = "value") %>% 
+  group_by(type) %>% 
+  summarise(across(where(is.numeric), list(mean = mean))) 
 
 
 
 
-df %>% 
-  select(-id) %>% 
-  group_by(ticks) %>% 
-  summarise(across(where(is.numeric), list(mean = mean))) %>% 
-  rename(Total = total_mean,
-         `<15` = und15_mean,
-         `15-64` = btw1564_mean,
-         `>65` = ov65_mean) %>% 
-  pivot_longer(!ticks, names_to = "type", values_to = "value") %>% 
-  mutate(type = factor(type, levels = c("Total", "<15", "15-64", ">65"))) %>% 
-  ggplot(aes(x = ticks, y = value, colour = type)) +
-  geom_line() +
-  facet_grid(vars(type), scales = "free") +
-  labs(x = "", y = "At-risk rate(%)") +
-  geom_hline(yintercept = 10, linetype=2) +
-  scale_x_continuous(breaks = c(0, 1000, 2000, 2922), labels = c("Jan 2018", "May 2019", "Oct 2020", "Dec 2021")) +
-  theme_bw() +
-  theme(legend.position = "none",
-        text = element_text(size=13))
-
-ggsave("plot.jpg", width = 7, height = 5)
 
 
-# Read multiple text files
-list_files <- list.files(pattern = "borough")
+7# Read multiple text files
+list_files <- list.files(pattern = "borough_scenario")
 rbindlist(lapply(list_files, read.table), idcol = "id") %>% 
   as_tibble %>% 
   select(-c(2, last_col())) %>% select(c(-1:-3)) -> df_borough
@@ -83,21 +89,48 @@ df %>% select(1:3) %>%
   bind_cols(df_borough_even) -> df_borough_fin
 
 
-df_borough_fin %>% 
-  select(-id) %>% 
-  group_by(ticks) %>% 
-  summarise(across(where(is.numeric), list(mean = mean))) %>% 
-  rename_with(~str_remove(., '_mean')) %>% 
-  pivot_longer(!ticks, names_to = "type", values_to = "value") %>% 
-  ggplot(aes(x = ticks, y = value, colour = type)) +
-  geom_line() +
-  facet_wrap(~type) +
-  geom_hline(yintercept = 10, linetype=2) +
-  labs(x = "", y = "At-risk rate(%)") +
-  scale_x_continuous(breaks = c(0, 1000, 2000, 2922), labels = c("Jan 2018", "May 2019", "Oct 2020", "Dec 2021")) +
-  theme_bw() +
-  theme(legend.position = "none",
-        text = element_text(size=13),
-        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+#
+list_files <- list.files(pattern = "borough_output")
+rbindlist(lapply(list_files, read.table), idcol = "id") %>% 
+  as_tibble %>% 
+  select(-c(2, last_col())) %>% select(c(-1:-3)) -> df_borough_baseline
 
-ggsave("borough.jpg", width = 10, height = 10)
+col_odd <- seq_len(ncol(df_borough_baseline)) %% 2
+df_borough_baseline_odd <- df_borough_baseline[ , col_odd == 1]            # Subset odd columns
+df_borough_baseline_odd 
+df_borough_baseline_even <- df_borough_baseline[ , col_odd == 0]            # Subset odd columns
+df_borough_baseline_even
+
+df_borough_baseline_odd %>% stack %>% with(unique(values)) -> london_districts
+colnames(df_borough_baseline_even) <- london_districts
+
+df_baseline %>% select(1:3) %>% 
+  bind_cols(df_borough_baseline_even) -> df_borough_baseline_fin
+
+
+df_borough_fin %>% 
+  select(-c(id, ticks, date)) %>% 
+  pivot_longer(everything(), names_to = "type", values_to = "value") %>% 
+  group_by(type) %>% 
+  summarise(across(where(is.numeric), list(mean = mean))) -> summary_boro_scenario
+
+
+df_borough_baseline_fin %>% 
+  select(-c(id, ticks, date)) %>% 
+  pivot_longer(everything(), names_to = "type", values_to = "value") %>% 
+  group_by(type) %>% 
+  summarise(across(where(is.numeric), list(mean = mean))) -> summary_boro_base
+
+left_join(summary_boro_base, summary_boro_scenario, by = "type") %>% 
+  rename(base = value_mean.x,
+         scenario = value_mean.y) %>% 
+  mutate(leap = scenario / base) %>% ## measuring the effect of tight guideline
+  arrange(desc(scenario)) %>% View
+  #pull(leap) %>% mean
+
+
+#######
+list_files <- list.files(pattern = "calibration")
+rbindlist(lapply(list_files, read.table), idcol = "id") %>% 
+  as_tibble %>% 
+  select(-c(2, last_col())) %>% select(c(-1:-3)) -> df_cali
