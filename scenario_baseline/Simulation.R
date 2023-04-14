@@ -70,6 +70,8 @@ rbindlist(lapply(list_files, read.table), idcol = "id") %>%
   as_tibble %>% 
   select(-c(2, last_col())) %>% select(c(-1:-3)) -> df_borough
 
+read.table("hammer.txt") %>% select(V63) %>% rename(Hammersmith = V63) -> hammer
+
 col_odd <- seq_len(ncol(df_borough)) %% 2
 df_borough_odd <- df_borough[ , col_odd == 1]            # Subset odd columns
 df_borough_odd 
@@ -89,11 +91,14 @@ df %>% select(1:3) %>%
          Kensington = Kensington_and_Chelsea) -> df_borough_fin
 
 
+
+
 df_borough_fin %>% 
   select(-id) %>% 
   group_by(ticks) %>% 
   summarise(across(where(is.numeric), list(mean = mean))) %>% 
   rename_with(~str_remove(., '_mean')) %>% 
+  bind_cols(hammer) %>% 
   pivot_longer(!ticks, names_to = "type", values_to = "value") %>% 
   ggplot(aes(x = ticks, y = value, colour = type)) +
   geom_line() +
