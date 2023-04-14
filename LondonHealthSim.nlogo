@@ -613,6 +613,7 @@ end
   let Bexley_csv    (count people with [districtname = "Bexley" and health <= 100]) / (count people with [districtname = "Bexley"]) * 100
   let Bromley_csv   (count people with [districtname = "Bromley" and health <= 100]) / (count people with [districtname = "Bromley"]) * 100
   let Croydon_csv   (count people with [districtname = "Croydon" and health <= 100]) / (count people with [districtname = "Croydon"]) * 100
+  let Hammersmith_csv (count people with [districtname = "Hammersmith and Fulham" and health <= 100]) / (count people with [districtname = "Hammersmith and Fulham"]) * 100
   let Tower_Hamlets_csv (count people with [districtname = "Tower Hamlets" and health <= 100]) / (count people with [districtname = "Tower Hamlets"]) * 100
   let Waltham_Forest_csv (count people with [districtname = "Waltham Forest" and health <= 100]) / (count people with [districtname = "Waltham Forest"]) * 100
   let Richmond_upon_Thames_csv (count people with [districtname = "Richmond upon Thames" and health <= 100]) / (count people with [districtname = "Richmond upon Thames"]) * 100
@@ -628,7 +629,7 @@ end
     "Ealing" Ealing_csv "Hounslow" Hounslow_csv "Hillingdon" Hillingdon_csv "Merton" Merton_csv "Sutton" Sutton_csv "Redbridge" Redbridge_csv
     "Havering" Havering_csv "Greenwich" Greenwich_csv "Bexley" Bexley_csv "Bromley" Bromley_csv "Croydon" Croydon_csv "Tower Hamlets" Tower_Hamlets_csv
     "Waltham Forest" Waltham_Forest_csv "Richmond upon Thames" Richmond_upon_Thames_csv "Kingston upon Thames" Kingston_upon_Thames_csv
-    "Kensington and Chelsea" Kensington_and_Chelsea_csv "Barking and Dagenham" Barking_and_Dagenham_csv "")
+    "Hammersmith and Fulham" Hammersmith_csv "Kensington and Chelsea" Kensington_and_Chelsea_csv "Barking and Dagenham" Barking_and_Dagenham_csv "")
   file-close
  end
 @#$#@#$#@
