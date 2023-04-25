@@ -125,8 +125,26 @@ left_join(summary_boro_base, summary_boro_scenario, by = "type") %>%
   rename(base = value_mean.x,
          scenario = value_mean.y) %>% 
   mutate(leap = scenario / base) %>% ## measuring the effect of tight guideline
-  arrange(desc(scenario)) %>% View
-  #pull(leap) %>% mean
+  arrange(desc(scenario)) -> summary_scenario_final
+
+# Hammersmith and Fulam: Base 0.829 -> Scenario 2.32
+
+write_csv(summary_scenario_final, "../supplementary_scenario_results.csv")
+
+
+# read.table("Ham_scenario.txt") %>% 
+#   as_tibble %>% 
+#   select(4:5) %>% 
+#   group_by(V4) %>% 
+#   summarise(across(where(is.numeric), list(mean = mean)))-> summary_hammer_scenario
+# 
+# list_files <- list.files(pattern = "Hammersmith")
+# rbindlist(lapply(list_files, read.table), idcol = "id") %>% 
+#   as_tibble %>% 
+#   select(V4, V5) %>% 
+#   group_by(V4) %>% 
+#   summarise(across(where(is.numeric), list(mean = mean)))-> summary_hammer_base
+
 
 
 #######
