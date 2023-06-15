@@ -1,4 +1,8 @@
 # LondonHealthSim
+
+![LondonHealthSim view](https://github.com/dataandcrowd/LondonHealthSim/assets/25252172/76430d3d-8545-4756-b9c9-992da18eb63d)
+
+
 ## Agent's Health
 We initiate the agent's health using the hospital admission episode 16-17.
 We capture the I24, I25, J01-J99 disorders (excluding J00 which is common cold) 
