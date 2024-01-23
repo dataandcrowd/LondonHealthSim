@@ -372,8 +372,9 @@ to go
   generate-no2-background
   generate-no2-patches
   generate-no2-road1 ;; modelled no2
-  export-no2
   move-people
+  export-no2-home
+  export-no2-work
 
   tick
   if ticks = 2921 [stop
@@ -419,39 +420,6 @@ to generate-no2-road1
 end
 
 
-to export-no2
-  let file-name "export_no2_results.csv"
-
-  ; Check if the file exists. If not, create it and write the header
-  if not file-exists? file-name [
-    file-open file-name
-    file-write "tick, id, HomeName, Road_next_to_home?, no2_home, DesName, Road_next_to_work?, no2_work"
-    file-print ""  ; Move to the next line
-    file-close
-  ]
-
-  ; Append data to the file
-  file-open file-name
-
-  ; Loop through each person and print their data
-  ask people [
-    let homeRoad? [is-road?] of homePatch  ; Check if the home patch is a road
-    let workRoad? [is-road?] of destinationPatch  ; Check if the work patch is a road
-    let no2_home [no2] of homePatch
-    let no2_work [no2] of destinationPatch
-
-    ; Print the data to the file
-    file-print (word ticks ", " who ", " homeName ", " homeRoad? ", " no2_home ", "
-      destinationName ", "  workRoad? "," no2_work)
-  ]
-
-  ; Close the file
-  file-close
-end
-
-
-
-
 ;;---------------------------------
 to move-people
   ifelse ticks mod 2 = 0 [move-out][come-home]
@@ -469,6 +437,70 @@ to come-home
   ]
 end
 
+;;---------------------------------
+
+to export-no2-home
+  let file-name "export_results_home.csv"
+
+  ; Check if the file exists. If not, create it and write the header
+  if not file-exists? file-name [
+    file-open file-name
+    file-write "tick, id, HomeName, DesName, Road_next_to_home?, no2_home"
+    file-print ""  ; Move to the next line
+    file-close
+  ]
+
+  ; Append data to the file
+  file-open file-name
+
+  ; Loop through each person and print their data
+  ask people [
+    if ticks mod 2 = 0 [
+
+    let homeRoad? [is-road?] of homePatch  ; Check if the home patch is a road
+    ;let workRoad? [is-road?] of destinationPatch  ; Check if the work patch is a road
+    let no2_home [no2] of homePatch
+    ;let no2_work [no2] of destinationPatch
+
+    ; Print the data to the file
+    file-print (word ticks ", " who ", " homeName ", " destinationName ", "  homeRoad? "," no2_home)
+  ]
+  ]
+  ; Close the file
+  file-close
+end
+
+
+to export-no2-work
+  let file-name "export_results_work.csv"
+
+  ; Check if the file exists. If not, create it and write the header
+  if not file-exists? file-name [
+    file-open file-name
+    file-write "tick, id, HomeName, DesName, Road_next_to_work?, no2_work"
+    file-print ""  ; Move to the next line
+    file-close
+  ]
+
+  ; Append data to the file
+  file-open file-name
+
+  ; Loop through each person and print their data
+  ask people [
+    if ticks mod 2 = 1 [
+
+    ;let homeRoad? [is-road?] of homePatch  ; Check if the home patch is a road
+    let workRoad? [is-road?] of destinationPatch  ; Check if the work patch is a road
+    ;let no2_home [no2] of homePatch
+    let no2_work [no2] of destinationPatch
+
+    ; Print the data to the file
+    file-print (word ticks ", " who ", " homeName ", " destinationName ", "  workRoad? "," no2_work)
+  ]
+  ]
+  ; Close the file
+  file-close
+end
 
 ;;;;;;;;;;;;;;
 
