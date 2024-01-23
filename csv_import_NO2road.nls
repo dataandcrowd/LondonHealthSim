@@ -1,0 +1,256 @@
+to set-air-pollution-road
+file-open "Data/AQ-by-rd-stations/BT4.csv"
+let aqfile_BT4_raw csv:from-file "Data/AQ-by-rd-stations/BT4.csv"
+set rd_BT4 remove-item 0 aqfile_BT4_raw
+
+file-open "Data/AQ-by-rd-stations/BT6.csv"
+let aqfile_BT6_raw csv:from-file "Data/AQ-by-rd-stations/BT6.csv"
+set rd_BT6 remove-item 0 aqfile_BT6_raw
+
+file-open "Data/AQ-by-rd-stations/BT8.csv"
+let aqfile_BT8_raw csv:from-file "Data/AQ-by-rd-stations/BT8.csv"
+set rd_BT8 remove-item 0 aqfile_BT8_raw
+
+file-open "Data/AQ-by-rd-stations/BY7.csv"
+let aqfile_BY7_raw csv:from-file "Data/AQ-by-rd-stations/BY7.csv"
+set rd_BY7 remove-item 0 aqfile_BY7_raw
+
+;file-open "Data/AQ-by-rd-stations/CE1.csv"
+;let aqfile_CE1_raw csv:from-file "Data/AQ-by-rd-stations/CE1.csv"
+;set rd_CE1 remove-item 0 aqfile_CE1_raw
+
+;file-open "Data/AQ-by-rd-stations/CE2.csv"
+;let aqfile_CE2_raw csv:from-file "Data/AQ-by-rd-stations/CE2.csv"
+;set rd_CE2 remove-item 0 aqfile_CE2_raw
+
+file-open "Data/AQ-by-rd-stations/CR5.csv"
+let aqfile_CR5_raw csv:from-file "Data/AQ-by-rd-stations/CR5.csv"
+set rd_CR5 remove-item 0 aqfile_CR5_raw
+
+;file-open "Data/AQ-by-rd-stations/CR7.csv"
+;let aqfile_CR7_raw csv:from-file "Data/AQ-by-rd-stations/CR7.csv"
+;set rd_CR7 remove-item 0 aqfile_CR7_raw
+
+file-open "Data/AQ-by-rd-stations/CT4.csv"
+let aqfile_CT4_raw csv:from-file "Data/AQ-by-rd-stations/CT4.csv"
+set rd_CT4 remove-item 0 aqfile_CT4_raw
+
+file-open "Data/AQ-by-rd-stations/CT6.csv"
+let aqfile_CT6_raw csv:from-file "Data/AQ-by-rd-stations/CT6.csv"
+set rd_CT6 remove-item 0 aqfile_CT6_raw
+
+file-open "Data/AQ-by-rd-stations/EA6.csv"
+let aqfile_EA6_raw csv:from-file "Data/AQ-by-rd-stations/EA6.csv"
+set rd_EA6 remove-item 0 aqfile_EA6_raw
+
+file-open "Data/AQ-by-rd-stations/EI1.csv"
+let aqfile_EI1_raw csv:from-file "Data/AQ-by-rd-stations/EI1.csv"
+set rd_EI1 remove-item 0 aqfile_EI1_raw
+
+file-open "Data/AQ-by-rd-stations/EN4.csv"
+let aqfile_EN4_raw csv:from-file "Data/AQ-by-rd-stations/EN4.csv"
+set rd_EN4 remove-item 0 aqfile_EN4_raw
+
+file-open "Data/AQ-by-rd-stations/EN5.csv"
+let aqfile_EN5_raw csv:from-file "Data/AQ-by-rd-stations/EN5.csv"
+set rd_EN5 remove-item 0 aqfile_EN5_raw
+
+file-open "Data/AQ-by-rd-stations/GB6.csv"
+let aqfile_GB6_raw csv:from-file "Data/AQ-by-rd-stations/GB6.csv"
+set rd_GB6 remove-item 0 aqfile_GB6_raw
+
+file-open "Data/AQ-by-rd-stations/GN0.csv"
+let aqfile_GN0_raw csv:from-file "Data/AQ-by-rd-stations/GN0.csv"
+set rd_GN0 remove-item 0 aqfile_GN0_raw
+
+file-open "Data/AQ-by-rd-stations/GN3.csv"
+let aqfile_GN3_raw csv:from-file "Data/AQ-by-rd-stations/GN3.csv"
+set rd_GN3 remove-item 0 aqfile_GN3_raw
+
+;file-open "Data/AQ-by-rd-stations/GN4.csv"
+;let aqfile_GN4_raw csv:from-file "Data/AQ-by-rd-stations/GN4.csv"
+;set rd_GN4 remove-item 0 aqfile_GN4_raw
+
+file-open "Data/AQ-by-rd-stations/GN5.csv"
+let aqfile_GN5_raw csv:from-file "Data/AQ-by-rd-stations/GN5.csv"
+set rd_GN5 remove-item 0 aqfile_GN5_raw
+
+file-open "Data/AQ-by-rd-stations/GN6.csv"
+let aqfile_GN6_raw csv:from-file "Data/AQ-by-rd-stations/GN6.csv"
+set rd_GN6 remove-item 0 aqfile_GN6_raw
+
+file-open "Data/AQ-by-rd-stations/GR7.csv"
+let aqfile_GR7_raw csv:from-file "Data/AQ-by-rd-stations/GR7.csv"
+set rd_GR7 remove-item 0 aqfile_GR7_raw
+
+file-open "Data/AQ-by-rd-stations/GR8.csv"
+let aqfile_GR8_raw csv:from-file "Data/AQ-by-rd-stations/GR8.csv"
+set rd_GR8 remove-item 0 aqfile_GR8_raw
+
+file-open "Data/AQ-by-rd-stations/GR9.csv"
+let aqfile_GR9_raw csv:from-file "Data/AQ-by-rd-stations/GR9.csv"
+set rd_GR9 remove-item 0 aqfile_GR9_raw
+
+;file-open "Data/AQ-by-rd-stations/GV1.csv"
+;let aqfile_GV1_raw csv:from-file "Data/AQ-by-rd-stations/GV1.csv"
+;set rd_GV1 remove-item 0 aqfile_GV1_raw
+
+;file-open "Data/AQ-by-rd-stations/GV2.csv"
+;let aqfile_GV2_raw csv:from-file "Data/AQ-by-rd-stations/GV2.csv"
+;set rd_GV2 remove-item 0 aqfile_GV2_raw
+
+;file-open "Data/AQ-by-rd-stations/HG1.csv"
+;let aqfile_HG1_raw csv:from-file "Data/AQ-by-rd-stations/HG1.csv"
+;set rd_HG1 remove-item 0 aqfile_HG1_raw
+
+file-open "Data/AQ-by-rd-stations/HK6.csv"
+let aqfile_HK6_raw csv:from-file "Data/AQ-by-rd-stations/HK6.csv"
+set rd_HK6 remove-item 0 aqfile_HK6_raw
+
+;file-open "Data/AQ-by-rd-stations/HR2.csv"
+;let aqfile_HR2_raw csv:from-file "Data/AQ-by-rd-stations/HR2.csv"
+;set rd_HR2 remove-item 0 aqfile_HR2_raw
+
+file-open "Data/AQ-by-rd-stations/HV1.csv"
+let aqfile_HV1_raw csv:from-file "Data/AQ-by-rd-stations/HV1.csv"
+set rd_HV1 remove-item 0 aqfile_HV1_raw
+
+file-open "Data/AQ-by-rd-stations/HV3.csv"
+let aqfile_HV3_raw csv:from-file "Data/AQ-by-rd-stations/HV3.csv"
+set rd_HV3 remove-item 0 aqfile_HV3_raw
+
+file-open "Data/AQ-by-rd-stations/IM1.csv"
+let aqfile_IM1_raw csv:from-file "Data/AQ-by-rd-stations/IM1.csv"
+set rd_IM1 remove-item 0 aqfile_IM1_raw
+
+file-open "Data/AQ-by-rd-stations/IS2.csv"
+let aqfile_IS2_raw csv:from-file "Data/AQ-by-rd-stations/IS2.csv"
+set rd_IS2 remove-item 0 aqfile_IS2_raw
+
+file-open "Data/AQ-by-rd-stations/KT4.csv"
+let aqfile_KT4_raw csv:from-file "Data/AQ-by-rd-stations/KT4.csv"
+set rd_KT4 remove-item 0 aqfile_KT4_raw
+
+file-open "Data/AQ-by-rd-stations/KT5.csv"
+let aqfile_KT5_raw csv:from-file "Data/AQ-by-rd-stations/KT5.csv"
+set rd_KT5 remove-item 0 aqfile_KT5_raw
+
+file-open "Data/AQ-by-rd-stations/KT6.csv"
+let aqfile_KT6_raw csv:from-file "Data/AQ-by-rd-stations/KT6.csv"
+set rd_KT6 remove-item 0 aqfile_KT6_raw
+
+file-open "Data/AQ-by-rd-stations/LB4.csv"
+let aqfile_LB4_raw csv:from-file "Data/AQ-by-rd-stations/LB4.csv"
+set rd_LB4 remove-item 0 aqfile_LB4_raw
+
+;file-open "Data/AQ-by-rd-stations/LW2.csv"
+;let aqfile_LW2_raw csv:from-file "Data/AQ-by-rd-stations/LW2.csv"
+;set rd_LW2 remove-item 0 aqfile_LW2_raw
+
+file-open "Data/AQ-by-rd-stations/LW4.csv"
+let aqfile_LW4_raw csv:from-file "Data/AQ-by-rd-stations/LW4.csv"
+set rd_LW4 remove-item 0 aqfile_LW4_raw
+
+;file-open "Data/AQ-by-rd-stations/ME9.csv"
+;let aqfile_ME9_raw csv:from-file "Data/AQ-by-rd-stations/ME9.csv"
+;set rd_ME9 remove-item 0 aqfile_ME9_raw
+
+file-open "Data/AQ-by-rd-stations/MY1.csv"
+let aqfile_MY1_raw csv:from-file "Data/AQ-by-rd-stations/MY1.csv"
+set rd_MY1 remove-item 0 aqfile_MY1_raw
+
+file-open "Data/AQ-by-rd-stations/NB1.csv"
+let aqfile_NB1_raw csv:from-file "Data/AQ-by-rd-stations/NB1.csv"
+set rd_NB1 remove-item 0 aqfile_NB1_raw
+
+file-open "Data/AQ-by-rd-stations/NM2.csv"
+let aqfile_NM2_raw csv:from-file "Data/AQ-by-rd-stations/NM2.csv"
+set rd_NM2 remove-item 0 aqfile_NM2_raw
+
+file-open "Data/AQ-by-rd-stations/RB4.csv"
+let aqfile_RB4_raw csv:from-file "Data/AQ-by-rd-stations/RB4.csv"
+set rd_RB4 remove-item 0 aqfile_RB4_raw
+
+file-open "Data/AQ-by-rd-stations/RI1.csv"
+let aqfile_RI1_raw csv:from-file "Data/AQ-by-rd-stations/RI1.csv"
+set rd_RI1 remove-item 0 aqfile_RI1_raw
+
+;file-open "Data/AQ-by-rd-stations/SK5.csv"
+;let aqfile_SK5_raw csv:from-file "Data/AQ-by-rd-stations/SK5.csv"
+;set rd_SK5 remove-item 0 aqfile_SK5_raw
+
+file-open "Data/AQ-by-rd-stations/SK8.csv"
+let aqfile_SK8_raw csv:from-file "Data/AQ-by-rd-stations/SK8.csv"
+set rd_SK8 remove-item 0 aqfile_SK8_raw
+
+;file-open "Data/AQ-by-rd-stations/SKA.csv"
+;let aqfile_SKA_raw csv:from-file "Data/AQ-by-rd-stations/SKA.csv"
+;set rd_SKA remove-item 0 aqfile_SKA_raw
+
+file-open "Data/AQ-by-rd-stations/ST4.csv"
+let aqfile_ST4_raw csv:from-file "Data/AQ-by-rd-stations/ST4.csv"
+set rd_ST4 remove-item 0 aqfile_ST4_raw
+
+file-open "Data/AQ-by-rd-stations/ST6.csv"
+let aqfile_ST6_raw csv:from-file "Data/AQ-by-rd-stations/ST6.csv"
+set rd_ST6 remove-item 0 aqfile_ST6_raw
+
+;file-open "Data/AQ-by-rd-stations/ST9.csv"
+;let aqfile_ST9_raw csv:from-file "Data/AQ-by-rd-stations/ST9.csv"
+;set rd_ST9 remove-item 0 aqfile_ST9_raw
+
+;file-open "Data/AQ-by-rd-stations/TH2.csv"
+;let aqfile_TH2_raw csv:from-file "Data/AQ-by-rd-stations/TH2.csv"
+;set rd_TH2 remove-item 0 aqfile_TH2_raw
+
+file-open "Data/AQ-by-rd-stations/TH4.csv"
+let aqfile_TH4_raw csv:from-file "Data/AQ-by-rd-stations/TH4.csv"
+set rd_TH4 remove-item 0 aqfile_TH4_raw
+
+;file-open "Data/AQ-by-rd-stations/TL4.csv"
+;let aqfile_TL4_raw csv:from-file "Data/AQ-by-rd-stations/TL4.csv"
+;set rd_TL4 remove-item 0 aqfile_TL4_raw
+
+;file-open "Data/AQ-by-rd-stations/TL6.csv"
+;let aqfile_TL6_raw csv:from-file "Data/AQ-by-rd-stations/TL6.csv"
+;set rd_TL6 remove-item 0 aqfile_TL6_raw
+
+file-open "Data/AQ-by-rd-stations/WA7.csv"
+let aqfile_WA7_raw csv:from-file "Data/AQ-by-rd-stations/WA7.csv"
+set rd_WA7 remove-item 0 aqfile_WA7_raw
+
+;file-open "Data/AQ-by-rd-stations/WA8.csv"
+;let aqfile_WA8_raw csv:from-file "Data/AQ-by-rd-stations/WA8.csv"
+;set rd_WA8 remove-item 0 aqfile_WA8_raw
+
+file-open "Data/AQ-by-rd-stations/WAA.csv"
+let aqfile_WAA_raw csv:from-file "Data/AQ-by-rd-stations/WAA.csv"
+set rd_WAA remove-item 0 aqfile_WAA_raw
+
+file-open "Data/AQ-by-rd-stations/WAB.csv"
+let aqfile_WAB_raw csv:from-file "Data/AQ-by-rd-stations/WAB.csv"
+set rd_WAB remove-item 0 aqfile_WAB_raw
+
+file-open "Data/AQ-by-rd-stations/WAC.csv"
+let aqfile_WAC_raw csv:from-file "Data/AQ-by-rd-stations/WAC.csv"
+set rd_WAC remove-item 0 aqfile_WAC_raw
+
+file-open "Data/AQ-by-rd-stations/WM6.csv"
+let aqfile_WM6_raw csv:from-file "Data/AQ-by-rd-stations/WM6.csv"
+set rd_WM6 remove-item 0 aqfile_WM6_raw
+
+file-open "Data/AQ-by-rd-stations/WMB.csv"
+let aqfile_WMB_raw csv:from-file "Data/AQ-by-rd-stations/WMB.csv"
+set rd_WMB remove-item 0 aqfile_WMB_raw
+
+file-open "Data/AQ-by-rd-stations/WMC.csv"
+let aqfile_WMC_raw csv:from-file "Data/AQ-by-rd-stations/WMC.csv"
+set rd_WMC remove-item 0 aqfile_WMC_raw
+
+;file-open "Data/AQ-by-rd-stations/WMD.csv"
+;let aqfile_WMD_raw csv:from-file "Data/AQ-by-rd-stations/WMD.csv"
+;set rd_WMD remove-item 0 aqfile_WMD_raw
+
+output-print "Roadside NO2 Loaded"
+  
+end

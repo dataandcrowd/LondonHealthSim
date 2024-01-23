@@ -1,0 +1,167 @@
+to generate-no2-background
+  let entirelist_BG1 item ticks aq_BG1
+  let aq_BG1_ sublist entirelist_BG1 5 29
+  let aq_BG1__ remove -999 aq_BG1_
+  ask one-of patches with [monitor-code = "BG1"][set no2 aq_BG1__]
+  
+  let entirelist_BG2 item ticks aq_BG2
+  let aq_BG2_ sublist entirelist_BG2 5 29
+  let aq_BG2__ remove -999 aq_BG2_
+  ask one-of patches with [monitor-code = "BG2"][set no2 aq_BG2__]
+  
+  let entirelist_BL0 item ticks aq_BL0
+  let aq_BL0_ sublist entirelist_BL0 5 29
+  let aq_BL0__ remove -999 aq_BL0_
+  ask one-of patches with [monitor-code = "BL0"][set no2 aq_BL0__]
+  
+  let entirelist_BQ7 item ticks aq_BQ7
+  let aq_BQ7_ sublist entirelist_BQ7 5 29
+  let aq_BQ7__ remove -999 aq_BQ7_
+  ask one-of patches with [monitor-code = "BQ7"][set no2 aq_BQ7__]
+  
+  let entirelist_BX1 item ticks aq_BX1
+  let aq_BX1_ sublist entirelist_BX1 5 29
+  let aq_BX1__ remove -999 aq_BX1_
+  ask one-of patches with [monitor-code = "BX1"][set no2 aq_BX1__]
+  
+  let entirelist_BX2 item ticks aq_BX2
+  let aq_BX2_ sublist entirelist_BX2 5 29
+  let aq_BX2__ remove -999 aq_BX2_
+  ask one-of patches with [monitor-code = "BX2"][set no2 aq_BX2__]
+  
+  let entirelist_CT3 item ticks aq_CT3
+  let aq_CT3_ sublist entirelist_CT3 5 29
+  let aq_CT3__ remove -999 aq_CT3_
+  ask one-of patches with [monitor-code = "CT3"][set no2 aq_CT3__]
+  
+  ;let entirelist_CW3 item ticks aq_CW3
+  ;let aq_CW3_ sublist entirelist_CW3 5 29
+  ;let aq_CW3__ remove -999 aq_CW3_
+  ;ask one-of patches with [monitor-code = "CW3"][set no2 aq_CW3__]
+  
+  ;let entirelist_EI3 item ticks aq_EI3
+  ;let aq_EI3_ sublist entirelist_EI3 5 29
+  ;let aq_EI3__ remove -999 aq_EI3_
+  ;ask one-of patches with [monitor-code = "EI3"][set no2 aq_EI3__]
+  
+  let entirelist_EN1 item ticks aq_EN1
+  let aq_EN1_ sublist entirelist_EN1 5 29
+  let aq_EN1__ remove -999 aq_EN1_
+  ask one-of patches with [monitor-code = "EN1"][set no2 aq_EN1__]
+  
+  let entirelist_EN7 item ticks aq_EN7
+  let aq_EN7_ sublist entirelist_EN7 5 29
+  let aq_EN7__ remove -999 aq_EN7_
+  ask one-of patches with [monitor-code = "EN7"][set no2 aq_EN7__]
+  
+  let entirelist_GR4 item ticks aq_GR4
+  let aq_GR4_ sublist entirelist_GR4 5 29
+  let aq_GR4__ remove -999 aq_GR4_
+  ask one-of patches with [monitor-code = "GR4"][set no2 aq_GR4__]
+  
+  let entirelist_HG4 item ticks aq_HG4
+  let aq_HG4_ sublist entirelist_HG4 5 29
+  let aq_HG4__ remove -999 aq_HG4_
+  ask one-of patches with [monitor-code = "HG4"][set no2 aq_HG4__]
+  
+  let entirelist_HI0 item ticks aq_HI0
+  let aq_HI0_ sublist entirelist_HI0 5 29
+  let aq_HI0__ remove -999 aq_HI0_
+  ask one-of patches with [monitor-code = "HI0"][set no2 aq_HI0__]
+  
+  ;let entirelist_HP1 item ticks aq_HP1
+  ;let aq_HP1_ sublist entirelist_HP1 5 29
+  ;let aq_HP1__ remove -999 aq_HP1_
+  ;ask one-of patches with [monitor-code = "HP1"][set no2 aq_HP1__]
+  
+  let entirelist_HR1 item ticks aq_HR1
+  let aq_HR1_ sublist entirelist_HR1 5 29
+  let aq_HR1__ remove -999 aq_HR1_
+  ask one-of patches with [monitor-code = "HR1"][set no2 aq_HR1__]
+  
+  let entirelist_IS6 item ticks aq_IS6
+  let aq_IS6_ sublist entirelist_IS6 5 29
+  let aq_IS6__ remove -999 aq_IS6_
+  ask one-of patches with [monitor-code = "IS6"][set no2 aq_IS6__]
+  
+  let entirelist_KC1 item ticks aq_KC1
+  let aq_KC1_ sublist entirelist_KC1 5 29
+  let aq_KC1__ remove -999 aq_KC1_
+  ask one-of patches with [monitor-code = "KC1"][set no2 aq_KC1__]
+  
+  ;let entirelist_KX8 item ticks aq_KX8
+  ;let aq_KX8_ sublist entirelist_KX8 5 29
+  ;let aq_KX8__ remove -999 aq_KX8_
+  ;ask one-of patches with [monitor-code = "KX8"][set no2 aq_KX8__]
+  
+  let entirelist_LB6 item ticks aq_LB6
+  let aq_LB6_ sublist entirelist_LB6 5 29
+  let aq_LB6__ remove -999 aq_LB6_
+  ask one-of patches with [monitor-code = "LB6"][set no2 aq_LB6__]
+  
+  let entirelist_LH0 item ticks aq_LH0
+  let aq_LH0_ sublist entirelist_LH0 5 29
+  let aq_LH0__ remove -999 aq_LH0_
+  ask one-of patches with [monitor-code = "LH0"][set no2 aq_LH0__]
+  
+  let entirelist_LW1 item ticks aq_LW1
+  let aq_LW1_ sublist entirelist_LW1 5 29
+  let aq_LW1__ remove -999 aq_LW1_
+  ask one-of patches with [monitor-code = "LW1"][set no2 aq_LW1__]
+  
+  let entirelist_LW5 item ticks aq_LW5
+  let aq_LW5_ sublist entirelist_LW5 5 29
+  let aq_LW5__ remove -999 aq_LW5_
+  ask one-of patches with [monitor-code = "LW5"][set no2 aq_LW5__]
+  
+  let entirelist_NM3 item ticks aq_NM3
+  let aq_NM3_ sublist entirelist_NM3 5 29
+  let aq_NM3__ remove -999 aq_NM3_
+  ask one-of patches with [monitor-code = "NM3"][set no2 aq_NM3__]
+  
+  ;let entirelist_OP1 item ticks aq_OP1
+  ;let aq_OP1_ sublist entirelist_OP1 5 29
+  ;let aq_OP1__ remove -999 aq_OP1_
+  ;ask one-of patches with [monitor-code = "OP1"][set no2 aq_OP1__]
+  
+  ;let entirelist_OP2 item ticks aq_OP2
+  ;let aq_OP2_ sublist entirelist_OP2 5 29
+  ;let aq_OP2__ remove -999 aq_OP2_
+  ;ask one-of patches with [monitor-code = "OP2"][set no2 aq_OP2__]
+  
+  let entirelist_RB7 item ticks aq_RB7
+  let aq_RB7_ sublist entirelist_RB7 5 29
+  let aq_RB7__ remove -999 aq_RB7_
+  ask one-of patches with [monitor-code = "RB7"][set no2 aq_RB7__]
+  
+  let entirelist_RI2 item ticks aq_RI2
+  let aq_RI2_ sublist entirelist_RI2 5 29
+  let aq_RI2__ remove -999 aq_RI2_
+  ask one-of patches with [monitor-code = "RI2"][set no2 aq_RI2__]
+  
+  let entirelist_SK6 item ticks aq_SK6
+  let aq_SK6_ sublist entirelist_SK6 5 29
+  let aq_SK6__ remove -999 aq_SK6_
+  ask one-of patches with [monitor-code = "SK6"][set no2 aq_SK6__]
+  
+  let entirelist_WA2 item ticks aq_WA2
+  let aq_WA2_ sublist entirelist_WA2 5 29
+  let aq_WA2__ remove -999 aq_WA2_
+  ask one-of patches with [monitor-code = "WA2"][set no2 aq_WA2__]
+  
+  let entirelist_WA9 item ticks aq_WA9
+  let aq_WA9_ sublist entirelist_WA9 5 29
+  let aq_WA9__ remove -999 aq_WA9_
+  ask one-of patches with [monitor-code = "WA9"][set no2 aq_WA9__]
+  
+  let entirelist_WM0 item ticks aq_WM0
+  let aq_WM0_ sublist entirelist_WM0 5 29
+  let aq_WM0__ remove -999 aq_WM0_
+  ask one-of patches with [monitor-code = "WM0"][set no2 aq_WM0__]
+  
+  ;let entirelist_WM5 item ticks aq_WM5
+  ;let aq_WM5_ sublist entirelist_WM5 5 29
+  ;let aq_WM5__ remove -999 aq_WM5_
+  ;ask one-of patches with [monitor-code = "WM5"][set no2 aq_WM5__]
+
+end

@@ -1,0 +1,49 @@
+to generate-no2-road
+    
+  let file-name "no2_real.csv"
+    
+if not file-exists? file-name [
+    file-open file-name
+    file-write "tick, monitor_code, no2"
+    file-print ""  ; Move to the next line
+    file-close
+  ]
+
+; Append data to the file
+  file-open file-name
+
+    
+
+  if ticks < 2850 [
+    write-no2-to-file "BT4" rd_BT4
+    write-no2-to-file "BT6" rd_BT6
+    write-no2-to-file "BT8" rd_BT8
+    write-no2-to-file "EI1" rd_EI1
+    write-no2-to-file "EN5" rd_EN5
+    write-no2-to-file "GB6" rd_GB6
+    write-no2-to-file "GN0" rd_GN0
+    write-no2-to-file "GN3" rd_GN3
+    write-no2-to-file "HV1" rd_HV1
+    write-no2-to-file "HV3" rd_HV3
+    write-no2-to-file "IS2" rd_IS2
+    write-no2-to-file "KT6" rd_KT6
+    write-no2-to-file "LW4" rd_LW4
+    write-no2-to-file "RB4" rd_RB4
+    write-no2-to-file "WMB" rd_WMB
+
+  ]
+  file-close
+end
+
+
+to write-no2-to-file [monitor_code rd-list]
+  let entirelist item ticks rd-list
+  let sublist1 sublist entirelist 5 29
+  let cleaned-list remove -999 sublist1
+  let mean-value mean cleaned-list
+  ask patches with [monitor_code = monitor-code] 
+  [ set no2 mean-value 
+    file-print (word ticks "," monitor-code "," no2)
+  ]
+  
+end

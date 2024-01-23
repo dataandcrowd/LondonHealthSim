@@ -1,0 +1,134 @@
+to set-air-pollution-background
+    ;; read the data all at once by using csv:from-file
+    file-open "Data/AQ-by-bg-stations/BG1.csv"
+    ;; read the data all at once by using csv:from-file
+    let aqfile_bg1_raw csv:from-file "Data/AQ-by-bg-stations/BG1.csv"
+    set aq_BG1 remove-item 0 aqfile_BG1_raw
+    
+    file-open "Data/AQ-by-bg-stations/BG2.csv"
+    let aqfile_BG2_raw csv:from-file "Data/AQ-by-bg-stations/BG2.csv"
+    set aq_BG2 remove-item 0 aqfile_BG2_raw
+    
+    file-open "Data/AQ-by-bg-stations/BL0.csv"
+    let aqfile_BL0_raw csv:from-file "Data/AQ-by-bg-stations/BL0.csv"
+    set aq_BL0 remove-item 0 aqfile_BL0_raw
+    
+    file-open "Data/AQ-by-bg-stations/BQ7.csv"
+    let aqfile_BQ7_raw csv:from-file "Data/AQ-by-bg-stations/BQ7.csv"
+    set aq_BQ7 remove-item 0 aqfile_BQ7_raw
+    
+    file-open "Data/AQ-by-bg-stations/BX1.csv"
+    let aqfile_BX1_raw csv:from-file "Data/AQ-by-bg-stations/BX1.csv"
+    set aq_BX1 remove-item 0 aqfile_BX1_raw
+    
+    file-open "Data/AQ-by-bg-stations/BX2.csv"
+    let aqfile_BX2_raw csv:from-file "Data/AQ-by-bg-stations/BX2.csv"
+    set aq_BX2 remove-item 0 aqfile_BX2_raw
+    
+    file-open "Data/AQ-by-bg-stations/CT3.csv"
+    let aqfile_CT3_raw csv:from-file "Data/AQ-by-bg-stations/CT3.csv"
+    set aq_CT3 remove-item 0 aqfile_CT3_raw
+    
+    ;file-open "Data/AQ-by-bg-stations/CW3.csv"
+    ;let aqfile_CW3_raw csv:from-file "Data/AQ-by-bg-stations/CW3.csv"
+    ;set aq_CW3 remove-item 0 aqfile_CW3_raw
+    
+    ;file-open "Data/AQ-by-bg-stations/EI3.csv"
+    ;let aqfile_EI3_raw csv:from-file "Data/AQ-by-bg-stations/EI3.csv"
+    ;set aq_EI3 remove-item 0 aqfile_EI3_raw
+    
+    file-open "Data/AQ-by-bg-stations/EN1.csv"
+    let aqfile_EN1_raw csv:from-file "Data/AQ-by-bg-stations/EN1.csv"
+    set aq_EN1 remove-item 0 aqfile_EN1_raw
+    
+    file-open "Data/AQ-by-bg-stations/EN7.csv"
+    let aqfile_EN7_raw csv:from-file "Data/AQ-by-bg-stations/EN7.csv"
+    set aq_EN7 remove-item 0 aqfile_EN7_raw
+    
+    file-open "Data/AQ-by-bg-stations/GR4.csv"
+    let aqfile_GR4_raw csv:from-file "Data/AQ-by-bg-stations/GR4.csv"
+    set aq_GR4 remove-item 0 aqfile_GR4_raw
+    
+    file-open "Data/AQ-by-bg-stations/HG4.csv"
+    let aqfile_HG4_raw csv:from-file "Data/AQ-by-bg-stations/HG4.csv"
+    set aq_HG4 remove-item 0 aqfile_HG4_raw
+    
+    file-open "Data/AQ-by-bg-stations/HI0.csv"
+    let aqfile_HI0_raw csv:from-file "Data/AQ-by-bg-stations/HI0.csv"
+    set aq_HI0 remove-item 0 aqfile_HI0_raw
+    
+    ;file-open "Data/AQ-by-bg-stations/HP1.csv"
+    ;let aqfile_HP1_raw csv:from-file "Data/AQ-by-bg-stations/HP1.csv"
+    ;set aq_HP1 remove-item 0 aqfile_HP1_raw
+    
+    file-open "Data/AQ-by-bg-stations/HR1.csv"
+    let aqfile_HR1_raw csv:from-file "Data/AQ-by-bg-stations/HR1.csv"
+    set aq_HR1 remove-item 0 aqfile_HR1_raw
+    
+    file-open "Data/AQ-by-bg-stations/IS6.csv"
+    let aqfile_IS6_raw csv:from-file "Data/AQ-by-bg-stations/IS6.csv"
+    set aq_IS6 remove-item 0 aqfile_IS6_raw
+    
+    file-open "Data/AQ-by-bg-stations/KC1.csv"
+    let aqfile_KC1_raw csv:from-file "Data/AQ-by-bg-stations/KC1.csv"
+    set aq_KC1 remove-item 0 aqfile_KC1_raw
+    
+    ;file-open "Data/AQ-by-bg-stations/KX8.csv"
+    ;let aqfile_KX8_raw csv:from-file "Data/AQ-by-bg-stations/KX8.csv"
+    ;set aq_KX8 remove-item 0 aqfile_KX8_raw
+    
+    file-open "Data/AQ-by-bg-stations/LB6.csv"
+    let aqfile_LB6_raw csv:from-file "Data/AQ-by-bg-stations/LB6.csv"
+    set aq_LB6 remove-item 0 aqfile_LB6_raw
+    
+    file-open "Data/AQ-by-bg-stations/LH0.csv"
+    let aqfile_LH0_raw csv:from-file "Data/AQ-by-bg-stations/LH0.csv"
+    set aq_LH0 remove-item 0 aqfile_LH0_raw
+    
+    file-open "Data/AQ-by-bg-stations/LW1.csv"
+    let aqfile_LW1_raw csv:from-file "Data/AQ-by-bg-stations/LW1.csv"
+    set aq_LW1 remove-item 0 aqfile_LW1_raw
+    
+    file-open "Data/AQ-by-bg-stations/LW5.csv"
+    let aqfile_LW5_raw csv:from-file "Data/AQ-by-bg-stations/LW5.csv"
+    set aq_LW5 remove-item 0 aqfile_LW5_raw
+    
+    file-open "Data/AQ-by-bg-stations/NM3.csv"
+    let aqfile_NM3_raw csv:from-file "Data/AQ-by-bg-stations/NM3.csv"
+    set aq_NM3 remove-item 0 aqfile_NM3_raw
+    
+    ;file-open "Data/AQ-by-bg-stations/OP1.csv"
+    ;let aqfile_OP1_raw csv:from-file "Data/AQ-by-bg-stations/OP1.csv"
+    ;set aq_OP1 remove-item 0 aqfile_OP1_raw
+    
+    ;file-open "Data/AQ-by-bg-stations/OP2.csv"
+    ;let aqfile_OP2_raw csv:from-file "Data/AQ-by-bg-stations/OP2.csv"
+    ;set aq_OP2 remove-item 0 aqfile_OP2_raw
+    
+    file-open "Data/AQ-by-bg-stations/RB7.csv"
+    let aqfile_RB7_raw csv:from-file "Data/AQ-by-bg-stations/RB7.csv"
+    set aq_RB7 remove-item 0 aqfile_RB7_raw
+    
+    file-open "Data/AQ-by-bg-stations/RI2.csv"
+    let aqfile_RI2_raw csv:from-file "Data/AQ-by-bg-stations/RI2.csv"
+    set aq_RI2 remove-item 0 aqfile_RI2_raw
+    
+    file-open "Data/AQ-by-bg-stations/SK6.csv"
+    let aqfile_SK6_raw csv:from-file "Data/AQ-by-bg-stations/SK6.csv"
+    set aq_SK6 remove-item 0 aqfile_SK6_raw
+    
+    file-open "Data/AQ-by-bg-stations/WA2.csv"
+    let aqfile_WA2_raw csv:from-file "Data/AQ-by-bg-stations/WA2.csv"
+    set aq_WA2 remove-item 0 aqfile_WA2_raw
+    
+    file-open "Data/AQ-by-bg-stations/WA9.csv"
+    let aqfile_WA9_raw csv:from-file "Data/AQ-by-bg-stations/WA9.csv"
+    set aq_WA9 remove-item 0 aqfile_WA9_raw
+    
+    file-open "Data/AQ-by-bg-stations/WM0.csv"
+    let aqfile_WM0_raw csv:from-file "Data/AQ-by-bg-stations/WM0.csv"
+    set aq_WM0 remove-item 0 aqfile_WM0_raw
+
+output-print "Background NO2 Loaded"
+  
+end
