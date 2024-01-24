@@ -25,9 +25,9 @@ globals [
 breed [borough-labels borough-label]
 breed[people person]
 
-patches-own [is-research-area? is-built-area? is-road? name homecode
+patches-own [is-research-area? is-road? name homecode ;is-built-area?
   is-monitor-site? monitor-name monitor-code monitor-type nearest_station no2
-  IMDrank ]
+  IMDdecile ]
 
 people-own  [health age districtName district-code
              homeName homePatch destinationName destinationPatch]
@@ -39,7 +39,7 @@ to setup
   file-close-all
   reset-ticks
   set-gis-data
-  set-urban-areas
+  ;set-urban-areas
   add-admin
   set-monitor-location
   set-air-pollution-background ;; in a separate source file
@@ -56,9 +56,9 @@ to set-gis-data
   ask patches [set pcolor white]
   gis:load-coordinate-system (word "Data/London_Boundary_cleaned.prj")
   set gu   gis:load-dataset "Data/London_Boundary_cleaned.shp"
-  set lc   gis:load-dataset "Data/London_LandCover.shp"
+  ;set lc   gis:load-dataset "Data/London_LandCover.shp"
   set road gis:load-dataset "Data/London_Road_Clean.shp"
-  set IMD gis:load-dataset "Data/IMD2019_LocalAuthority_Upper.shp"
+  set IMD gis:load-dataset "Data/London_LSOAs_IMD.shp"
 
   ;; patch size: approx 200m x 200m
 
@@ -111,17 +111,17 @@ to add-admin
 output-print "Admin area added" ;;
 end
 
-to set-urban-areas
-  foreach gis:feature-list-of lc [vector-feature ->
-    ask patches [if gis:intersects? vector-feature self
-                [let all-twenty-two-codes gis:property-value vector-feature "Code"
-        if (all-twenty-two-codes = 20) or (all-twenty-two-codes = 21) [set is-built-area? true]
-    ]]
- ]
- ask patches with [is-built-area? != true][set is-built-area? false]
+;to set-urban-areas
+;  foreach gis:feature-list-of lc [vector-feature ->
+;    ask patches [if gis:intersects? vector-feature self
+;                [let all-twenty-two-codes gis:property-value vector-feature "Code"
+;        if (all-twenty-two-codes = 20) or (all-twenty-two-codes = 21) [set is-built-area? true]
+;    ]]
+; ]
+; ask patches with [is-built-area? != true][set is-built-area? false]
 
- output-print "Land Cover Allocated" ;;
-end
+; output-print "Land Cover Allocated" ;;
+;end
 
 
 ;;----------------------------
@@ -200,15 +200,11 @@ end
 to add-IMD
   gis:set-drawing-color blue
   foreach gis:feature-list-of IMD [vector-feature ->
-    ask patches[ if gis:intersects? vector-feature self [set IMDrank gis:property-value vector-feature "RAvgRank"]
+    ask patches[ if gis:intersects? vector-feature self [set IMDdecile gis:property-value vector-feature "IncDec"]
  ]]
 
-  ;; Rank close to 1 (more deprived), Rank with higher numbers (Less deprived)
-  ;; if rank 5-11: +1
-  ;; if rank 12-47: +5
-  ;; if rank 48-87: +10
-  ;; if rank 88-123: +20
-  ;; if rank 124-148: +40
+  ;; Rank close to 1 (more deprived, lower decile), Rank with higher numbers (Less deprived)
+  ;; Rank 10% - 90%
 
 output-print "Deprivation Index added" ;;
 end
@@ -249,9 +245,13 @@ end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 to set-people
+  random-seed 47822 ;; generate random seed so that agents can be allocated to diff location every time we hit start button
+
+
   foreach table:keys districtpop [ dist ->
     let ageGroupID 0
     foreach table:get districtpop dist [ number ->
+
       create-people number [
         setupAgeGroup agegroupID
         set districtName dist
@@ -259,7 +259,7 @@ to set-people
         set shape "person"
         set heading random 360
         set homeName dist
-        set homePatch one-of patches with [homecode = [district-code] of myself and is-built-area? = true]
+        set homePatch one-of patches with [homecode = [district-code] of myself and is-monitor-site? = false]
         move-to homePatch
         set destinationName "unidentified"
         set destinationPatch "unidentified"
@@ -271,24 +271,23 @@ to set-people
 end
 
 to setupAgeGroup [ID]
-if ID = 0  [set size 1 set age  5 + random 5 set health 300 - (0.071 * (10 + random 30)) set color orange]
-if ID = 1  [set size 1 set age 10 + random 5 set health 300 - (0.061 * (10 + random 30)) set color orange + 1]
-if ID = 2  [set size 1 set age 15 + random 5 set health 300 - (0.111 * (10 + random 30)) set color orange + 2]
-if ID = 3  [set size 1 set age 20 + random 5 set health 300 - (0.185 * (10 + random 30)) set color turquoise]
-if ID = 4  [set size 1 set age 25 + random 5 set health 300 - (0.233 * (10 + random 30)) set color turquoise]
-if ID = 5  [set size 1 set age 30 + random 5 set health 300 - (0.233 * (10 + random 30)) set color turquoise]
-if ID = 6  [set size 1 set age 35 + random 5 set health 300 - (0.217 * (10 + random 30)) set color turquoise]
-if ID = 7  [set size 1 set age 40 + random 5 set health 300 - (0.224 * (10 + random 30)) set color brown]
-if ID = 8  [set size 1 set age 45 + random 5 set health 300 - (0.294 * (10 + random 30)) set color brown]
-if ID = 9  [set size 1 set age 50 + random 5 set health 300 - (0.342 * (10 + random 30)) set color brown]
-if ID = 10 [set size 1 set age 55 + random 5 set health 300 - (0.409 * (10 + random 30)) set color brown]
-if ID = 11 [set size 1 set age 60 + random 5 set health 300 - (0.539 * (10 + random 30)) set color violet]
-if ID = 12 [set size 1 set age 65 + random 5 set health 300 - (0.853 * (10 + random 30)) set color violet]
-if ID = 13 [set size 1 set age 70 + random 5 set health 300 - (0.956 * (10 + random 30)) set color violet]
-if ID = 14 [set size 1 set age 75 + random 5 set health 300 - (1.413 * (10 + random 20)) set color violet]
-if ID = 15 [set size 1 set age 80 + random 5 set health 300 - (2.059 * (10 + random 20)) set color pink]
-if ID = 16 [set size 1 set age 85 + random 15 set health 300 - (3.034 * (10 + random 20)) set color pink]
-
+  if ID = 0  [set size 1 set age  5 + random 5 set color orange]
+  if ID = 1  [set size 1 set age 10 + random 5 set color orange + 1]
+  if ID = 2  [set size 1 set age 15 + random 5 set color orange + 2]
+  if ID = 3  [set size 1 set age 20 + random 5 set color turquoise]
+  if ID = 4  [set size 1 set age 25 + random 5 set color turquoise]
+  if ID = 5  [set size 1 set age 30 + random 5 set color turquoise]
+  if ID = 6  [set size 1 set age 35 + random 5 set color turquoise]
+  if ID = 7  [set size 1 set age 40 + random 5 set color brown]
+  if ID = 8  [set size 1 set age 45 + random 5 set color brown]
+  if ID = 9  [set size 1 set age 50 + random 5 set color brown]
+  if ID = 10 [set size 1 set age 55 + random 5 set color brown]
+  if ID = 11 [set size 1 set age 60 + random 5 set color violet]
+  if ID = 12 [set size 1 set age 65 + random 5 set color violet]
+  if ID = 13 [set size 1 set age 70 + random 5 set color violet]
+  if ID = 14 [set size 1 set age 75 + random 5 set color violet]
+  if ID = 15 [set size 1 set age 80 + random 5 set color pink]
+  if ID = 16 [set size 1 set age 85 + random 15 set color pink]
 end
 
 
@@ -329,7 +328,7 @@ to set-destination   ;; Decomposing matrix
 
          ask n-of number peopleRemaining [
                 set destinationName newDestination ;; assign destination name
-                set destinationPatch one-of patches with [name = newDestination and is-built-area? = true]
+                set destinationPatch one-of patches with [name = newDestination and is-monitor-site? = false]
        ]
     set matrix-loop matrix-loop + 1
   ]
@@ -377,7 +376,7 @@ to go
   export-no2-work
 
   tick
-  if ticks = 2921 [stop
+  if ticks = 2920 [stop
   ;set iteration-count iteration-count + 1
   ]
 
@@ -415,12 +414,17 @@ to generate-no2-road1
     set no2 [no2] of nearest-road
   ]
 ]
-
-
 end
 
-
 ;;---------------------------------
+;set inner_south (list "Southwark" "Lambeth" "Wandsworth" "Lewisham")
+;set inner_north (list "Hammersmith and Fulham" "Kensington and Chelsea" "Haringey" "Tower Hamlets" "Newham")
+;set inner_ncentre (list "Westminster" "Camden" "Islington" "Hackney")
+;set outer_west (list "Enfield" "Waltham Forest" "Barnet" "Brent" "Harrow" "Ealing" "Hounslow" "Hillingdon"
+;"Richmond upon Thames" "Kingston upon Thames" "Merton" "Sutton")
+;set outer_east (list "Waltham Forest" "Redbridge" "Barking and Dagenham" "Havering" "Greenwich" "Bexley" "Bromley" "Croydon")
+
+
 to move-people
   ifelse ticks mod 2 = 0 [move-out][come-home]
 
@@ -445,7 +449,7 @@ to export-no2-home
   ; Check if the file exists. If not, create it and write the header
   if not file-exists? file-name [
     file-open file-name
-    file-write "tick, id, HomeName, DesName, Road_next_to_home?, no2_home"
+    file-write "tick, Date, id, Age, Imd, HomeName, DesName, Road_next_to_home?, no2_home"
     file-print ""  ; Move to the next line
     file-close
   ]
@@ -458,12 +462,12 @@ to export-no2-home
     if ticks mod 2 = 0 [
 
     let homeRoad? [is-road?] of homePatch  ; Check if the home patch is a road
-    ;let workRoad? [is-road?] of destinationPatch  ; Check if the work patch is a road
     let no2_home [no2] of homePatch
-    ;let no2_work [no2] of destinationPatch
+    let date item 1 item ticks aq_BG1
+    let imd2019 [IMDdecile] of homePatch
 
     ; Print the data to the file
-    file-print (word ticks ", " who ", " homeName ", " destinationName ", "  homeRoad? "," no2_home)
+    file-print (word ticks "," date ", " who ", " age ", " imd2019 "," homeName ", " destinationName ", "  homeRoad? "," no2_home)
   ]
   ]
   ; Close the file
@@ -477,7 +481,7 @@ to export-no2-work
   ; Check if the file exists. If not, create it and write the header
   if not file-exists? file-name [
     file-open file-name
-    file-write "tick, id, HomeName, DesName, Road_next_to_work?, no2_work"
+    file-write "tick, Date, id, Age, Imd, HomeName, DesName, Road_next_to_work?, no2_work"
     file-print ""  ; Move to the next line
     file-close
   ]
@@ -489,13 +493,13 @@ to export-no2-work
   ask people [
     if ticks mod 2 = 1 [
 
-    ;let homeRoad? [is-road?] of homePatch  ; Check if the home patch is a road
     let workRoad? [is-road?] of destinationPatch  ; Check if the work patch is a road
-    ;let no2_home [no2] of homePatch
     let no2_work [no2] of destinationPatch
+    let date item 1 item ticks aq_BG1
+    let imd2019 [IMDdecile] of homePatch
 
     ; Print the data to the file
-    file-print (word ticks ", " who ", " homeName ", " destinationName ", "  workRoad? "," no2_work)
+    file-print (word ticks "," date ", " who ", " age ", " imd2019 "," homeName ", " destinationName "," workRoad? "," no2_work)
   ]
   ]
   ; Close the file
@@ -581,7 +585,7 @@ NIL
 OUTPUT
 604
 24
-848
+933
 177
 12
 
@@ -633,6 +637,28 @@ I
 NIL
 NIL
 1
+
+MONITOR
+604
+237
+702
+282
+Date
+item 1 item ticks aq_BG1
+17
+1
+11
+
+MONITOR
+709
+237
+766
+282
+Where?
+item 2 item ticks aq_BG1
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
