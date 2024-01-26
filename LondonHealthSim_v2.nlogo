@@ -25,7 +25,7 @@ globals [
 breed [borough-labels borough-label]
 breed[people person]
 
-patches-own [is-research-area? is-road? name homecode ;is-built-area?
+patches-own [is-research-area? is-road? name homecode traffic
   is-monitor-site? monitor-name monitor-code monitor-type nearest_station no2
   IMDdecile ]
 
@@ -39,7 +39,7 @@ to setup
   file-close-all
   reset-ticks
   set-gis-data
-  ;set-urban-areas
+  set-roads
   add-admin
   set-monitor-location
   set-air-pollution-background ;; in a separate source file
@@ -57,7 +57,7 @@ to set-gis-data
   gis:load-coordinate-system (word "Data/London_Boundary_cleaned.prj")
   set gu   gis:load-dataset "Data/London_Boundary_cleaned.shp"
   ;set lc   gis:load-dataset "Data/London_LandCover.shp"
-  set road gis:load-dataset "Data/London_Road_Clean.shp"
+  set road gis:load-dataset "Data/London_Road_Dissolve.shp"
   set IMD gis:load-dataset "Data/London_LSOAs_IMD.shp"
 
   ;; patch size: approx 200m x 200m
@@ -75,17 +75,11 @@ to set-gis-data
   )
 
   gis:set-world-envelope expanded_envelope
-
-  ;gis:set-world-envelope (gis:envelope-union-of gis:envelope-of gu)
   ask patches gis:intersecting gu [set is-research-area? true]
-  ask patches gis:intersecting road [set is-road? true]
   gis:set-drawing-color [64  64  64]    gis:draw gu 1
-  gis:set-drawing-color 7    gis:draw road 1
 
   ask patches with [is-research-area? != true][set is-research-area? false set name false set homecode false]
-  ask patches with [is-road? != true][set is-road? false]
 
-  output-print "Road set"
 
   ;; add GIS labels
 
@@ -99,6 +93,7 @@ to set-gis-data
           set label-color blue
           set label gis:property-value vector-feature "NAME"
         ]]]
+  output-print "GIS loaded"
 end
 
 
@@ -109,6 +104,26 @@ to add-admin
                                  set homecode gis:property-value vector-feature "GSS_CODE"]
  ]]
 output-print "Admin area added" ;;
+end
+
+
+to set-roads
+  let road-patches patches with [gis:intersects? road self]
+  ask patches gis:intersecting road [set is-road? true]
+  ask patches with [is-road? != true][set is-road? false]
+
+ foreach gis:feature-list-of road [vector-feature ->
+    ask patches [if gis:intersects? vector-feature self
+      [ set traffic gis:property-value vector-feature "mtr_dcl"]
+    ]
+  ]
+
+  ; Draw the road
+  gis:set-drawing-color 98
+  gis:draw road 1
+
+  output-print "Road set"
+
 end
 
 ;to set-urban-areas
@@ -395,7 +410,7 @@ to generate-no2-patches
 
       if (is-list? no2_list_from_near_st) [
         set no2 one-of no2_list_from_near_st
-        set pcolor scale-color pink no2 0 50
+        set pcolor scale-color pink no2 0 100
       ]
     ]
   ]
