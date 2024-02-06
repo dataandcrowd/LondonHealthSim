@@ -15,9 +15,9 @@ file-open "Data/AQ-by-rd-stations/BY7.csv"
 let aqfile_BY7_raw csv:from-file "Data/AQ-by-rd-stations/BY7.csv"
 set rd_BY7 remove-item 0 aqfile_BY7_raw
 
-;file-open "Data/AQ-by-rd-stations/CE1.csv"
-;let aqfile_CE1_raw csv:from-file "Data/AQ-by-rd-stations/CE1.csv"
-;set rd_CE1 remove-item 0 aqfile_CE1_raw
+file-open "Data/AQ-by-rd-stations/CE1.csv"
+let aqfile_CE1_raw csv:from-file "Data/AQ-by-rd-stations/CE1.csv"
+set rd_CE1 remove-item 0 aqfile_CE1_raw
 
 ;file-open "Data/AQ-by-rd-stations/CE2.csv"
 ;let aqfile_CE2_raw csv:from-file "Data/AQ-by-rd-stations/CE2.csv"
@@ -27,9 +27,9 @@ file-open "Data/AQ-by-rd-stations/CR5.csv"
 let aqfile_CR5_raw csv:from-file "Data/AQ-by-rd-stations/CR5.csv"
 set rd_CR5 remove-item 0 aqfile_CR5_raw
 
-;file-open "Data/AQ-by-rd-stations/CR7.csv"
-;let aqfile_CR7_raw csv:from-file "Data/AQ-by-rd-stations/CR7.csv"
-;set rd_CR7 remove-item 0 aqfile_CR7_raw
+file-open "Data/AQ-by-rd-stations/CR7.csv"
+let aqfile_CR7_raw csv:from-file "Data/AQ-by-rd-stations/CR7.csv"
+set rd_CR7 remove-item 0 aqfile_CR7_raw
 
 file-open "Data/AQ-by-rd-stations/CT4.csv"
 let aqfile_CT4_raw csv:from-file "Data/AQ-by-rd-stations/CT4.csv"
@@ -67,9 +67,9 @@ file-open "Data/AQ-by-rd-stations/GN3.csv"
 let aqfile_GN3_raw csv:from-file "Data/AQ-by-rd-stations/GN3.csv"
 set rd_GN3 remove-item 0 aqfile_GN3_raw
 
-;file-open "Data/AQ-by-rd-stations/GN4.csv"
-;let aqfile_GN4_raw csv:from-file "Data/AQ-by-rd-stations/GN4.csv"
-;set rd_GN4 remove-item 0 aqfile_GN4_raw
+file-open "Data/AQ-by-rd-stations/GN4.csv"
+let aqfile_GN4_raw csv:from-file "Data/AQ-by-rd-stations/GN4.csv"
+set rd_GN4 remove-item 0 aqfile_GN4_raw
 
 file-open "Data/AQ-by-rd-stations/GN5.csv"
 let aqfile_GN5_raw csv:from-file "Data/AQ-by-rd-stations/GN5.csv"
@@ -91,17 +91,17 @@ file-open "Data/AQ-by-rd-stations/GR9.csv"
 let aqfile_GR9_raw csv:from-file "Data/AQ-by-rd-stations/GR9.csv"
 set rd_GR9 remove-item 0 aqfile_GR9_raw
 
-;file-open "Data/AQ-by-rd-stations/GV1.csv"
-;let aqfile_GV1_raw csv:from-file "Data/AQ-by-rd-stations/GV1.csv"
-;set rd_GV1 remove-item 0 aqfile_GV1_raw
+file-open "Data/AQ-by-rd-stations/GV1.csv"
+let aqfile_GV1_raw csv:from-file "Data/AQ-by-rd-stations/GV1.csv"
+set rd_GV1 remove-item 0 aqfile_GV1_raw
 
-;file-open "Data/AQ-by-rd-stations/GV2.csv"
-;let aqfile_GV2_raw csv:from-file "Data/AQ-by-rd-stations/GV2.csv"
-;set rd_GV2 remove-item 0 aqfile_GV2_raw
+file-open "Data/AQ-by-rd-stations/GV2.csv"
+let aqfile_GV2_raw csv:from-file "Data/AQ-by-rd-stations/GV2.csv"
+set rd_GV2 remove-item 0 aqfile_GV2_raw
 
-;file-open "Data/AQ-by-rd-stations/HG1.csv"
-;let aqfile_HG1_raw csv:from-file "Data/AQ-by-rd-stations/HG1.csv"
-;set rd_HG1 remove-item 0 aqfile_HG1_raw
+file-open "Data/AQ-by-rd-stations/HG1.csv"
+let aqfile_HG1_raw csv:from-file "Data/AQ-by-rd-stations/HG1.csv"
+set rd_HG1 remove-item 0 aqfile_HG1_raw
 
 file-open "Data/AQ-by-rd-stations/HK6.csv"
 let aqfile_HK6_raw csv:from-file "Data/AQ-by-rd-stations/HK6.csv"
@@ -143,17 +143,17 @@ file-open "Data/AQ-by-rd-stations/LB4.csv"
 let aqfile_LB4_raw csv:from-file "Data/AQ-by-rd-stations/LB4.csv"
 set rd_LB4 remove-item 0 aqfile_LB4_raw
 
-;file-open "Data/AQ-by-rd-stations/LW2.csv"
-;let aqfile_LW2_raw csv:from-file "Data/AQ-by-rd-stations/LW2.csv"
-;set rd_LW2 remove-item 0 aqfile_LW2_raw
+file-open "Data/AQ-by-rd-stations/LW2.csv"
+let aqfile_LW2_raw csv:from-file "Data/AQ-by-rd-stations/LW2.csv"
+set rd_LW2 remove-item 0 aqfile_LW2_raw
 
 file-open "Data/AQ-by-rd-stations/LW4.csv"
 let aqfile_LW4_raw csv:from-file "Data/AQ-by-rd-stations/LW4.csv"
 set rd_LW4 remove-item 0 aqfile_LW4_raw
 
-;file-open "Data/AQ-by-rd-stations/ME9.csv"
-;let aqfile_ME9_raw csv:from-file "Data/AQ-by-rd-stations/ME9.csv"
-;set rd_ME9 remove-item 0 aqfile_ME9_raw
+file-open "Data/AQ-by-rd-stations/ME9.csv"
+let aqfile_ME9_raw csv:from-file "Data/AQ-by-rd-stations/ME9.csv"
+set rd_ME9 remove-item 0 aqfile_ME9_raw
 
 file-open "Data/AQ-by-rd-stations/MY1.csv"
 let aqfile_MY1_raw csv:from-file "Data/AQ-by-rd-stations/MY1.csv"
@@ -175,9 +175,9 @@ file-open "Data/AQ-by-rd-stations/RI1.csv"
 let aqfile_RI1_raw csv:from-file "Data/AQ-by-rd-stations/RI1.csv"
 set rd_RI1 remove-item 0 aqfile_RI1_raw
 
-;file-open "Data/AQ-by-rd-stations/SK5.csv"
-;let aqfile_SK5_raw csv:from-file "Data/AQ-by-rd-stations/SK5.csv"
-;set rd_SK5 remove-item 0 aqfile_SK5_raw
+file-open "Data/AQ-by-rd-stations/SK5.csv"
+let aqfile_SK5_raw csv:from-file "Data/AQ-by-rd-stations/SK5.csv"
+set rd_SK5 remove-item 0 aqfile_SK5_raw
 
 file-open "Data/AQ-by-rd-stations/SK8.csv"
 let aqfile_SK8_raw csv:from-file "Data/AQ-by-rd-stations/SK8.csv"
@@ -199,9 +199,9 @@ set rd_ST6 remove-item 0 aqfile_ST6_raw
 ;let aqfile_ST9_raw csv:from-file "Data/AQ-by-rd-stations/ST9.csv"
 ;set rd_ST9 remove-item 0 aqfile_ST9_raw
 
-;file-open "Data/AQ-by-rd-stations/TH2.csv"
-;let aqfile_TH2_raw csv:from-file "Data/AQ-by-rd-stations/TH2.csv"
-;set rd_TH2 remove-item 0 aqfile_TH2_raw
+file-open "Data/AQ-by-rd-stations/TH2.csv"
+let aqfile_TH2_raw csv:from-file "Data/AQ-by-rd-stations/TH2.csv"
+set rd_TH2 remove-item 0 aqfile_TH2_raw
 
 file-open "Data/AQ-by-rd-stations/TH4.csv"
 let aqfile_TH4_raw csv:from-file "Data/AQ-by-rd-stations/TH4.csv"
@@ -219,9 +219,9 @@ file-open "Data/AQ-by-rd-stations/WA7.csv"
 let aqfile_WA7_raw csv:from-file "Data/AQ-by-rd-stations/WA7.csv"
 set rd_WA7 remove-item 0 aqfile_WA7_raw
 
-;file-open "Data/AQ-by-rd-stations/WA8.csv"
-;let aqfile_WA8_raw csv:from-file "Data/AQ-by-rd-stations/WA8.csv"
-;set rd_WA8 remove-item 0 aqfile_WA8_raw
+file-open "Data/AQ-by-rd-stations/WA8.csv"
+let aqfile_WA8_raw csv:from-file "Data/AQ-by-rd-stations/WA8.csv"
+set rd_WA8 remove-item 0 aqfile_WA8_raw
 
 file-open "Data/AQ-by-rd-stations/WAA.csv"
 let aqfile_WAA_raw csv:from-file "Data/AQ-by-rd-stations/WAA.csv"
@@ -247,9 +247,9 @@ file-open "Data/AQ-by-rd-stations/WMC.csv"
 let aqfile_WMC_raw csv:from-file "Data/AQ-by-rd-stations/WMC.csv"
 set rd_WMC remove-item 0 aqfile_WMC_raw
 
-;file-open "Data/AQ-by-rd-stations/WMD.csv"
-;let aqfile_WMD_raw csv:from-file "Data/AQ-by-rd-stations/WMD.csv"
-;set rd_WMD remove-item 0 aqfile_WMD_raw
+file-open "Data/AQ-by-rd-stations/WMD.csv"
+let aqfile_WMD_raw csv:from-file "Data/AQ-by-rd-stations/WMD.csv"
+set rd_WMD remove-item 0 aqfile_WMD_raw
 
 output-print "Roadside NO2 Loaded"
   

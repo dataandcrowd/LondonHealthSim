@@ -5,7 +5,7 @@ __includes["csv_import_NO2background.nls" "csv_run_NO2background.nls"
 extensions [csv gis table]
 globals [
   ;;; Admin
-  gu road IMD lc districtPop districtadminCode station_background station_road
+  gu road IMD lc districtPop districtadminCode station_background station_road nox_weighting
 
   no2_bs
 
@@ -16,7 +16,7 @@ globals [
   ;;; Air Quality (Roadside)
   rd_BT4 rd_BT6 rd_BT8 rd_BY7 rd_CE1 rd_CE2 rd_CR5 rd_CR7 rd_CT4
   rd_CT6 rd_EA6 rd_EI1 rd_EN4 rd_EN5 rd_GB6 rd_GN0 rd_GN3 rd_GN4
-  rd_GN5 rd_GN6 rd_GR7 rd_GR8 rd_GR9 rd_GV1  rd_HG1 rd_HK6
+  rd_GN5 rd_GN6 rd_GR7 rd_GR8 rd_GR9 rd_GV1  rd_HG1 rd_HK6 rd_GV2
   rd_HR2 rd_HV1 rd_HV3 rd_IM1 rd_IS2 rd_KT4 rd_KT5 rd_KT6 rd_LB4
   rd_LW2 rd_LW4 rd_ME9 rd_MY1 rd_NB1 rd_NM2 rd_RB4 rd_RI1 rd_SK5
   rd_SK8 rd_SKA rd_ST4 rd_ST6 rd_ST9 rd_TH2 rd_TH4 rd_TL4 rd_TL6
@@ -25,8 +25,8 @@ globals [
 breed [borough-labels borough-label]
 breed[people person]
 
-patches-own [is-research-area? is-road? name homecode traffic
-  is-monitor-site? monitor-name monitor-code monitor-type nearest_station no2
+patches-own [is-research-area? is-road? name homecode traffic nox_weight is-built-area?
+  is-monitor-site? monitor-name monitor-code monitor-type nearest_station no2_list no2
   IMDdecile ]
 
 people-own  [health age districtName district-code
@@ -40,6 +40,8 @@ to setup
   reset-ticks
   set-gis-data
   set-roads
+  set-nox-weight
+  set-urban-areas
   add-admin
   set-monitor-location
   set-air-pollution-background ;; in a separate source file
@@ -56,9 +58,10 @@ to set-gis-data
   ask patches [set pcolor white]
   gis:load-coordinate-system (word "Data/London_Boundary_cleaned.prj")
   set gu   gis:load-dataset "Data/London_Boundary_cleaned.shp"
-  ;set lc   gis:load-dataset "Data/London_LandCover.shp"
+  set lc   gis:load-dataset "Data/London_LandCover.shp"
   set road gis:load-dataset "Data/London_Road_Dissolve.shp"
   set IMD gis:load-dataset "Data/London_LSOAs_IMD.shp"
+  set nox_weighting gis:load-dataset "Data/London_NOX.shp"
 
   ;; patch size: approx 200m x 200m
 
@@ -126,17 +129,42 @@ to set-roads
 
 end
 
-;to set-urban-areas
-;  foreach gis:feature-list-of lc [vector-feature ->
-;    ask patches [if gis:intersects? vector-feature self
-;                [let all-twenty-two-codes gis:property-value vector-feature "Code"
-;        if (all-twenty-two-codes = 20) or (all-twenty-two-codes = 21) [set is-built-area? true]
-;    ]]
-; ]
-; ask patches with [is-built-area? != true][set is-built-area? false]
 
-; output-print "Land Cover Allocated" ;;
-;end
+to set-nox-weight
+    foreach gis:feature-list-of nox_weighting [vector-feature ->
+    ask patches[ if gis:intersects? vector-feature self [
+      set nox_weight gis:property-value vector-feature "emiweight"
+      ]
+ ]]
+
+  ask patches with [nox_weight = 0 or nox_weight = nobody][set nox_weight 0]
+  ask patches with [is-research-area?][
+    if nox_weight = 0 [set nox_weight 1]
+    if nox_weight = 1 [set nox_weight 1.15]
+    if nox_weight = 2 [set nox_weight 1.20]
+    if nox_weight = 3 [set nox_weight 1.25]
+    if nox_weight = 4 [set nox_weight 1.30]
+    if nox_weight = 5 [set nox_weight 1.40]
+
+  ]
+
+output-print "nox weighting added" ;;
+end
+
+
+;;-----------------------------------
+;; Move agents to urban areas coded 20 or 21
+to set-urban-areas
+  foreach gis:feature-list-of lc [vector-feature ->
+    ask patches [if gis:intersects? vector-feature self
+                [let all-twenty-two-codes gis:property-value vector-feature "Code"
+        if (all-twenty-two-codes = 20) or (all-twenty-two-codes = 21) [set is-built-area? true]
+    ]]
+ ]
+ ask patches with [is-built-area? != true][set is-built-area? false]
+
+ output-print "Land Cover Allocated" ;;
+end
 
 
 ;;----------------------------
@@ -144,17 +172,13 @@ to set-monitor-location
   let stations gis:load-dataset "Data/London_AP_Stations.shp"
 
   set station_background (list  "BG1" "BG2" "BL0" "BQ7" "BX1" "BX2" "CT3" "EN1" "EN7" "GR4" "HG4" "HI0"
- "HR1" "IS6" "KC1" "LB6" "LH0" "LW1" "LW5" "NM3"  "RB7" "RI2" "SK6" "WA2" "WA9" "WM0" )
+ "HR1" "IS6" "KC1" "LB6" "LH0" "LW1" "LW5" "NM3"  "RB7" "RI2" "SK6" "WA2" "WA9" "WM0")
 
-  set station_road (list "BT4" "BT6" "BT8" "BY7" "CE1" "CE2" "CR5" "CR7" "CT4"
-    "CT6" "EA6" "EI1" "EN4" "EN5" "GB6" "GN0" "GN3" "GN4"
-    "GN5" "GN6" "GR7" "GR8" "GR9" "GV1" "GV2" "HG1" "HK6"
-    "HR2" "HV1" "HV3" "IM1" "IS2" "KT4" "KT5" "KT6" "LB4"
-    "LW2" "LW4" "ME9" "MY1" "NB1" "NM2" "RB4" "RI1" "SK5"
-    "SK8" "SKA" "ST4" "ST6" "ST9" "TH2" "TH4" "TL4" "TL6"
-    "WA7" "WA8" "WAA" "WAB" "WAC" "WM6" "WMB" "WMC" "WMD"
+  set station_road (list "BT4" "BT6" "BT8" "BY7" "CR5"
+    "CT4" "CT6" "EA6" "EI1" "EN4" "EN5" "GB6" "GN0" "GN3" "GN5" "GN6" "GR7" "GR8" "GR9" "GV2"
+    "HK6" "HV1" "HV3" "IM1" "IS2" "KT4" "KT5" "KT6" "LB4" "LW4" "MY1" "NB1" "NM2" "RB4" "RI1"
+    "SK8" "ST4" "ST6" "TH4" "WAA" "WAB" "WAC" "WM6" "WMB" "WMC"
     )
-
 
   foreach gis:feature-list-of stations [vector-feature ->
     let current_code gis:property-value vector-feature "code"
@@ -184,9 +208,7 @@ to set-monitor-location
     ]
     ]
 
-
   output-print "Station GIS location loaded"
-
 
   ask patches with [is-monitor-site? != true]
   [set monitor-name false set is-monitor-site? false set monitor-type false set monitor-code false]
@@ -203,8 +225,7 @@ to set-nearest-station
     monitor-code = false and
     monitor-name = false ][
     set nearest_station min-one-of patches with [
-      is-monitor-site? = true and
-      (monitor-type = "Urban Background" or monitor-type = "Suburban")
+      is-monitor-site? = true
     ] [distance myself]
   ]
 
@@ -384,51 +405,100 @@ end
 
 to go
   generate-no2-background
+  generate-no2-road
   generate-no2-patches
-  generate-no2-road1 ;; modelled no2
   move-people
-  export-no2-home
-  export-no2-work
+  ;export-no2
 
   tick
-  if ticks = 2920 [stop
-  ;set iteration-count iteration-count + 1
-  ]
+  if ticks = 2191 [stop]
 
 end
 
 
 to generate-no2-patches
   ask patches [
-    if is-research-area? = true and
-       is-monitor-site? = false and
+    if is-research-area? and
+       not is-monitor-site? and
        monitor-code = false and
-       monitor-name = false and
-       nearest_station != 0
+       monitor-name = false
     [
-      let no2_list_from_near_st shuffle [no2] of nearest_station
-
-      if (is-list? no2_list_from_near_st) [
-        set no2 one-of no2_list_from_near_st
-        set pcolor scale-color pink no2 0 100
-      ]
+      let no2_interpolated (calculate-idw-no2 self)
+      set no2 no2_interpolated * nox_weight
+      set pcolor scale-color pink no2 0 100
     ]
+  ]
+
+
+  ask patches with [not is-built-area?][set no2 (no2 * 0.7)]
+
+    ask patches with [monitor-type = "Urban Background" or monitor-type = "Suburban"] [
+  let valid-neighbors neighbors4 with [not is-monitor-site?]
+  if count valid-neighbors > 0 [
+    let average-no2 mean [no2] of valid-neighbors
+    ;output-print average-no2
+    if no2 = 0 [set no2 average-no2]
+  ]
+]
+
+
+
+end
+
+to-report calculate-idw-no2 [target-patch]
+  let total-weighted-value 0
+  let total-weight 0
+
+  ; Loop through each station
+  ask patches with [is-monitor-site? and monitor-type = "Roadside" or monitor-type = "Kerbside"] [
+    let avg_no2 mean [no2_list] of self
+
+    let dist distance target-patch  ; Calculate the distance from the station to the patch
+    if dist > 0 [  ; Avoid division by zero
+      let weight 1 / (dist ^ 2)  ; Calculate the weight based on distance
+      ;let avg_no2 mean no2  ; Calculate the average NO2 value for the station
+      set total-weighted-value total-weighted-value + (avg_no2 * weight)
+      set total-weight total-weight + weight
+    ]
+  ]
+
+  ; Calculate the weighted average
+  ifelse total-weight > 0 [
+    report total-weighted-value / total-weight
+  ] [
+    report 0  ; Avoid division by zero, handle as you see fit
   ]
 end
 
-to generate-no2-road1
-  ask patches with [is-road? = true and is-research-area? = true] [
-    if not is-list? no2 [ ;; the monitoring stations have no2 in a list format
-      set no2 (no2 * (1.25 + random-float roadpollution_weight))
-    ]
+
+
+to export-no2
+  let file-name "no2_export.csv"
+  ;let list_roadstation ["BT4" "BT6" "BT8" "EI1" "GB6" "GN0" "GN3" "HV1" "HV3" "IS2" "KT6" "LW4" "RB4" "WMB"]
+  let list_roadstation (list  "BG1" "BG2" "BL0" "BQ7" "BX1" "BX2" "CT3" "EN1" "EN7" "GR4" "HG4" "HI0"
+ "HR1" "IS6" "KC1" "LB6" "LH0" "LW1" "LW5" "NM3"  "RB7" "RI2" "SK6" "WA2" "WA9" "WM0")
+
+  ; Check if the file exists. If not, create it and write the header
+  if not file-exists? file-name [
+    file-open file-name
+    file-write "tick, monitor_code, no2"
+    file-print ""  ; Move to the next line
+    file-close
   ]
 
-  ask patches with [is-monitor-site? and monitor-type = "Roadside"] [
-  let nearest-road min-one-of (patches with [is-road? and is-monitor-site? = false]) [distance myself]
-  if nearest-road != nobody [  ; checks if a road patch is found
-    set no2 [no2] of nearest-road
+    ; Append data to the file
+  file-open file-name
+
+
+  ; Loop through each patch in the research area and check if monitor-type is in the list
+  ask patches with [is-road? and is-research-area?] [
+    if member? monitor-code list_roadstation [
+      file-print (word  ticks ", " monitor-code ", " no2)
+    ]
   ]
-]
+  ; Close the file
+  file-close
+
 end
 
 ;;---------------------------------
@@ -441,7 +511,7 @@ end
 
 
 to move-people
-  ifelse ticks mod 2 = 0 [move-out][come-home]
+  ifelse ticks mod 2 = 1 [move-out][come-home]
 
 end
 
@@ -458,69 +528,6 @@ end
 
 ;;---------------------------------
 
-to export-no2-home
-  let file-name "export_results_home.csv"
-
-  ; Check if the file exists. If not, create it and write the header
-  if not file-exists? file-name [
-    file-open file-name
-    file-write "tick, Date, id, Age, Imd, HomeName, DesName, Road_next_to_home?, no2_home"
-    file-print ""  ; Move to the next line
-    file-close
-  ]
-
-  ; Append data to the file
-  file-open file-name
-
-  ; Loop through each person and print their data
-  ask people [
-    if ticks mod 2 = 0 [
-
-    let homeRoad? [is-road?] of homePatch  ; Check if the home patch is a road
-    let no2_home [no2] of homePatch
-    let date item 1 item ticks aq_BG1
-    let imd2019 [IMDdecile] of homePatch
-
-    ; Print the data to the file
-    file-print (word ticks "," date ", " who ", " age ", " imd2019 "," homeName ", " destinationName ", "  homeRoad? "," no2_home)
-  ]
-  ]
-  ; Close the file
-  file-close
-end
-
-
-to export-no2-work
-  let file-name "export_results_work.csv"
-
-  ; Check if the file exists. If not, create it and write the header
-  if not file-exists? file-name [
-    file-open file-name
-    file-write "tick, Date, id, Age, Imd, HomeName, DesName, Road_next_to_work?, no2_work"
-    file-print ""  ; Move to the next line
-    file-close
-  ]
-
-  ; Append data to the file
-  file-open file-name
-
-  ; Loop through each person and print their data
-  ask people [
-    if ticks mod 2 = 1 [
-
-    let workRoad? [is-road?] of destinationPatch  ; Check if the work patch is a road
-    let no2_work [no2] of destinationPatch
-    let date item 1 item ticks aq_BG1
-    let imd2019 [IMDdecile] of homePatch
-
-    ; Print the data to the file
-    file-print (word ticks "," date ", " who ", " age ", " imd2019 "," homeName ", " destinationName "," workRoad? "," no2_work)
-  ]
-  ]
-  ; Close the file
-  file-close
-end
-
 ;;;;;;;;;;;;;;
 
 to iterate-10-times
@@ -531,7 +538,7 @@ to iterate-10-times
 end
 
 to go-until-2921
-  while [ticks < 2921] [
+  while [ticks < 2196] [
     go
   ]
 end
