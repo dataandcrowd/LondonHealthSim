@@ -281,7 +281,7 @@ end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 to set-people
-  random-seed 47822 ;; generate random seed so that agents can be allocated to diff location every time we hit start button
+  random-seed 4000 ;; generate random seed so that agents can be allocated to diff location every time we hit start button
 
 
   foreach table:keys districtpop [ dist ->
@@ -295,7 +295,8 @@ to set-people
         set shape "person"
         set heading random 360
         set homeName dist
-        set homePatch one-of patches with [homecode = [district-code] of myself and is-monitor-site? = false]
+        set homePatch one-of patches with [homecode = [district-code] of myself and is-research-area? = true and
+          is-monitor-site? = false ]
         move-to homePatch
         set destinationName "unidentified"
         set destinationPatch "unidentified"
@@ -364,7 +365,8 @@ to set-destination   ;; Decomposing matrix
 
          ask n-of number peopleRemaining [
                 set destinationName newDestination ;; assign destination name
-                set destinationPatch one-of patches with [name = newDestination and is-monitor-site? = false]
+                set destinationPatch one-of patches with [name = newDestination and
+                  is-monitor-site? = false and is-built-area?]
        ]
     set matrix-loop matrix-loop + 1
   ]
@@ -511,7 +513,7 @@ end
 
 
 to move-people
-  ifelse ticks mod 2 = 1 [move-out][come-home]
+  ifelse ticks mod 2 = 0 [move-out][come-home]
 
 end
 
@@ -546,11 +548,11 @@ end
 GRAPHICS-WINDOW
 108
 24
-567
-379
+568
+380
 -1
 -1
-1.5
+2.5
 1
 10
 1
@@ -561,9 +563,9 @@ GRAPHICS-WINDOW
 0
 1
 0
-300
+180
 0
-230
+138
 1
 1
 1
