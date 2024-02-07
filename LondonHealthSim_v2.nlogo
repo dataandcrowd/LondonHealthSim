@@ -29,7 +29,7 @@ patches-own [is-research-area? is-road? name homecode traffic nox_weight is-buil
   is-monitor-site? monitor-name monitor-code monitor-type nearest_station no2_list no2
   IMDdecile ]
 
-people-own  [health age districtName district-code
+people-own  [ age districtName district-code no2-exposed road? IMD_decile
              homeName homePatch destinationName destinationPatch]
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -81,8 +81,8 @@ to set-gis-data
   ask patches gis:intersecting gu [set is-research-area? true]
   gis:set-drawing-color [64  64  64]    gis:draw gu 1
 
+  ask patch max-pxcor max-pycor [set is-research-area? true]
   ask patches with [is-research-area? != true][set is-research-area? false set name false set homecode false]
-
 
   ;; add GIS labels
 
@@ -300,7 +300,9 @@ to set-people
         move-to homePatch
         set destinationName "unidentified"
         set destinationPatch "unidentified"
-        ;set health 300
+        set road? [is-road?] of patch-here
+        set IMD_decile [IMDdecile] of patch-here
+
       ]
       set ageGroupID AgeGroupID + 1
       ]
@@ -381,10 +383,10 @@ to set-destination   ;; Decomposing matrix
 
  ask people with [destinationpatch = "unidentified" and age < 15]
                  [set destinationName homeName
-                  set destinationPatch one-of patches in-radius 3] ;; Under 15
+                    set destinationPatch one-of patches in-radius 1 with [is-research-area?]] ;; Under 15
  ask people with [destinationpatch = "unidentified" and age >= 65]
                  [set destinationName homeName
-                  set destinationPatch one-of patches in-radius 1] ;; Over 65
+                  set destinationPatch one-of patches in-radius 1 with [is-research-area?]] ;; Over 65
 
  output-print "People without destinations(nobody)"
  let wordloop 0
@@ -396,7 +398,8 @@ to set-destination   ;; Decomposing matrix
  set wordloop wordloop + 1
 
 
- ask people with [destinationname = "unidentified"][die] ;; We inevitably had to delete 8 agents from the City of London
+ ask people with [destinationname = "unidentified" or
+    destinationPatch = not is-research-area?][die] ;; We inevitably had to delete 8 agents from the City of London
   output-print "Set OD matrix" ;;
 end
 
@@ -411,9 +414,12 @@ to go
   generate-no2-patches
   move-people
   ;export-no2
+  export-no2-exposure
 
   tick
   if ticks = 2191 [stop]
+
+  ask people [set no2-exposed [no2] of patch-here]
 
 end
 
@@ -491,7 +497,6 @@ to export-no2
     ; Append data to the file
   file-open file-name
 
-
   ; Loop through each patch in the research area and check if monitor-type is in the list
   ask patches with [is-road? and is-research-area?] [
     if member? monitor-code list_roadstation [
@@ -510,6 +515,30 @@ end
 ;set outer_west (list "Enfield" "Waltham Forest" "Barnet" "Brent" "Harrow" "Ealing" "Hounslow" "Hillingdon"
 ;"Richmond upon Thames" "Kingston upon Thames" "Merton" "Sutton")
 ;set outer_east (list "Waltham Forest" "Redbridge" "Barking and Dagenham" "Havering" "Greenwich" "Bexley" "Bromley" "Croydon")
+
+
+to export-no2-exposure
+  let file-name "no2_export_people.csv"
+
+  if not file-exists? file-name [
+    file-open file-name
+    file-write "tick, who, IMD_decile, districtname, destinationname, road, no2"
+    file-print ""  ; Move to the next line
+    file-close
+  ]
+
+    ; Append data to the file
+  file-open file-name
+
+  ; Loop through each patch in the research area and check if monitor-type is in the list
+  ask people with [is-research-area? and destinationname != "others"] [
+      file-print (word  ticks ", " who ", " IMD_decile ", " districtname ", " destinationname ", " road? ", " no2)
+
+  ]
+  ; Close the file
+  file-close
+
+end
 
 
 to move-people

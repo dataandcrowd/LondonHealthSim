@@ -39,3 +39,5 @@ vignettes/*.pdf
 .Renviron
 .DS_Store
 .LondonHealthSim.tmp.nlogo
+.LondonHealthSim_v2.tmp.nlogo
+no2_export_people.csv
