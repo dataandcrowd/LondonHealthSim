@@ -9,6 +9,7 @@ library(tidyverse)
 library(data.table)
 library(janitor)
 library(arrow)
+library(ggbump)
 
 ```
 
@@ -76,9 +77,9 @@ results |>
   summarise(no2 = mean(no2, na.rm = TRUE)) %>%
   ggplot() +
   geom_line(aes(x=date, y = no2, group = where, colour = where)) +
-  geom_hline(yintercept=40, linetype = "dotted", alpha = .5) +
-  labs(x="", y="NO2 Exposure") +
-  scale_x_date(date_labels = "%b %Y") +
+  #geom_hline(yintercept=40, linetype = "dotted", alpha = .5) +
+  labs(x="", y="Mean NO2") +
+  scale_x_date(date_labels = "%b\n%Y") +
   theme_bw() +
   theme(legend.position = "bottom",
         legend.title = element_blank(),
@@ -89,45 +90,83 @@ results |>
 
 ggsave("exposure.jpg", width = 7, height = 4)
 
+
+
+results |> 
+  mutate(dt_month= month(date),
+         dt_year = year(date)) |> 
+  group_by(where, date = floor_date(date, "month"), imd_decile) %>%
+  summarise(no2 = mean(no2, na.rm = TRUE)) %>%
+  filter(imd_decile != 0 ) |> 
+  ggplot() +
+  geom_line(aes(x=date, y = no2, group = factor(imd_decile), colour = factor(imd_decile)), size = 1) +
+  #geom_hline(yintercept=40, linetype = "dotted", alpha = .5) +
+  labs(x="", y="Mean NO2") +
+  scale_x_date(date_labels = "%b\n%Y") +
+  facet_wrap(~where) +
+  theme_bw() +
+  theme(legend.position = "bottom",
+        legend.title = element_blank(),
+        legend.text=element_text(size=13),
+        text = element_text(size=15),
+        axis.text.x = element_text(size = 10),
+        legend.margin=margin(t=-25)) 
+
+ggsave("exposure_imd.jpg", width = 9, height = 4)
+
 ```
 
 
 
 ```{r}
 results |> 
-mutate(dt_month= month(date),
+  mutate(dt_month= month(date),
          dt_year = year(date)) |> 
   mutate(
     home_cat = case_when(
-    districtname %in% c("Southwark", "Lambeth", "Wandsworth", "Lewisham",
-                     "Hammersmith and Fulham", "Kensington and Chelsea", "Haringey", "Tower Hamlets", "Newham",
-                     "Westminster", "Camden", "Islington", "Hackney") ~ "Inner London",
-    districtname %in% c("Enfield", "Waltham Forest", "Barnet", "Brent", "Harrow", "Ealing", "Hounslow", "Hillingdon",
-                     "Richmond upon Thames", "Kingston upon Thames", "Merton", "Sutton",
-                     "Waltham Forest", "Redbridge", "Barking and Dagenham", "Havering", "Greenwich", 
-                     "Bexley", "Bromley", "Croydon") ~ "Outer London",
-    TRUE ~ NA_character_),
-  
+      districtname %in% c("Southwark", "Lambeth", "Wandsworth", "Lewisham",
+                          "Hammersmith and Fulham", "Kensington and Chelsea", "Haringey", "Tower Hamlets", "Newham",
+                          "Westminster", "Camden", "Islington", "Hackney") ~ "Inner London",
+      districtname %in% c("Enfield", "Waltham Forest", "Barnet", "Brent", "Harrow", "Ealing", "Hounslow", "Hillingdon",
+                          "Richmond upon Thames", "Kingston upon Thames", "Merton", "Sutton",
+                          "Waltham Forest", "Redbridge", "Barking and Dagenham", "Havering", "Greenwich", 
+                          "Bexley", "Bromley", "Croydon") ~ "Outer London",
+      TRUE ~ NA_character_),
+    
     work_cat = case_when(
-    destinationname %in% c("Southwark", "Lambeth", "Wandsworth", "Lewisham",
-                     "Hammersmith and Fulham", "Kensington and Chelsea", "Haringey", "Tower Hamlets", "Newham",
-                     "Westminster", "Camden", "Islington", "Hackney") ~ "Inner London",
-    destinationname %in% c("Enfield", "Waltham Forest", "Barnet", "Brent", "Harrow", "Ealing", "Hounslow", "Hillingdon",
-                     "Richmond upon Thames", "Kingston upon Thames", "Merton", "Sutton",
-                     "Waltham Forest", "Redbridge", "Barking and Dagenham", "Havering", "Greenwich", 
-                     "Bexley", "Bromley", "Croydon") ~ "Outer London",
-    TRUE ~ NA_character_),
-  home_work = paste(home_cat, work_cat, sep = "-")) |> 
+      destinationname %in% c("Southwark", "Lambeth", "Wandsworth", "Lewisham",
+                             "Hammersmith and Fulham", "Kensington and Chelsea", "Haringey", "Tower Hamlets", "Newham",
+                             "Westminster", "Camden", "Islington", "Hackney") ~ "Inner London",
+      destinationname %in% c("Enfield", "Waltham Forest", "Barnet", "Brent", "Harrow", "Ealing", "Hounslow", "Hillingdon",
+                             "Richmond upon Thames", "Kingston upon Thames", "Merton", "Sutton",
+                             "Waltham Forest", "Redbridge", "Barking and Dagenham", "Havering", "Greenwich", 
+                             "Bexley", "Bromley", "Croydon") ~ "Outer London",
+      TRUE ~ NA_character_),
+    home_work = paste(home_cat, work_cat, sep = "-")) -> boros
+
+boros |> 
+  filter(tick == 0) |> 
+  group_by(home_cat, work_cat) |> 
+  summarise(n = n(),
+            per = n/7043 * 100)
+
+
+
+boros |> 
+  group_by(home_work, dt_year,where) |> 
+  summarise(no2 = mean(no2, na.rm = T)) |> 
+  pivot_wider(names_from = where, values_from = no2)
+    
+    
+boros |> 
   group_by(date, dt_year, dt_month, home_work, where) |> 
   summarise(no2 = mean(no2, na.rm = T)) |> 
-  mutate(ym = paste(dt_year, dt_month, sep = "_")) -> gg 
-
-gg %>%
+  mutate(ym = paste(dt_year, dt_month, sep = "_")) |> 
   group_by(where, home_work, date = floor_date(date, "month")) %>%
   summarise(mean_no2 = mean(no2, na.rm = TRUE)) %>%
   ggplot(aes(date, mean_no2, colour = home_work)) +
   geom_line( size = .5) +
-  geom_hline(yintercept=40, linetype = "dotted", alpha = .5) +
+  #geom_hline(yintercept=40, linetype = "dotted", alpha = .5) +
   labs(x="", y="NO2 Exposure") +
   facet_wrap(where~.) +
   scale_x_date(date_labels = "%b\n%Y") +
@@ -139,8 +178,30 @@ gg %>%
         axis.text.x = element_text(size = 8),
         legend.margin=margin(t=-20)) 
 
+
 ggsave("Where.jpg", width = 9, height = 4)
 
+
+boros |> 
+  group_by(date, dt_year, dt_month, home_work, where) |> 
+  summarise(no2 = mean(no2, na.rm = T)) |> 
+  mutate(ym = paste(dt_year, dt_month, sep = "_")) |> 
+  group_by(where, home_work, date = floor_date(date, "month")) %>%
+  summarise(mean_no2 = mean(no2, na.rm = TRUE)) %>%
+  ggplot(aes(date, mean_no2, colour = where)) +
+  geom_line( size = .5) +
+  labs(x="", y="NO2 Exposure") +
+  facet_wrap(~home_work) +
+  scale_x_date(date_labels = "%b\n%Y") +
+  theme_bw() +
+  theme(legend.position = "bottom",
+        legend.title = element_blank(),
+        legend.text=element_text(size=7),
+        text = element_text(size=15),
+        axis.text.x = element_text(size = 8),
+        legend.margin=margin(t=-20)) 
+
+ggsave("Where2.jpg", width = 9, height = 5)
 ```
 
 
@@ -155,9 +216,11 @@ results |>
 
 # by month
 results |> 
-  group_by(where, road, date = floor_date(date, "month")) %>%
+  group_by(road, where, date = floor_date(date, "quarter")) %>%
   summarise(no2 = mean(no2, na.rm = TRUE)) |> 
-pivot_wider(names_from = date, values_from = no2)
+pivot_wider(names_from = road, values_from = no2)|> 
+  print(n = 24)
+
 
 
 results |> 
@@ -166,14 +229,13 @@ results |>
   pivot_wider(names_from = where, values_from = no2) |> 
   mutate(per = Work/Home,
          per1 = if_else(per > 1, per - 1, 1 - per)) 
-
 # Plot
 results |> 
   group_by(where, road, date = floor_date(date, "month")) %>%
   summarise(no2 = mean(no2, na.rm = TRUE)) |> 
   ggplot(aes(date, no2, colour = road)) +
   geom_line( size = .5) +
-  geom_hline(yintercept=40, linetype = "dotted", alpha = .5) +
+ #geom_hline(yintercept=40, linetype = "dotted", alpha = .5) +
   labs(x="", y="NO2 Exposure") +
   facet_wrap(where~.) +
   scale_x_date(date_labels = "%b\n%Y") +
