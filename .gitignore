@@ -41,3 +41,4 @@ vignettes/*.pdf
 .LondonHealthSim.tmp.nlogo
 .LondonHealthSim_v2.tmp.nlogo
 no2_export_people.csv
+post simulation/no2.parquet

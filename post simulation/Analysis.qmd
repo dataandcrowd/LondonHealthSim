@@ -8,19 +8,22 @@ format: html
 library(tidyverse)
 library(data.table)
 library(janitor)
-
+library(arrow)
 
 ```
 
 
 ## get the files
 ```{r}
-raw_data <- fread("no2_export_people.csv", quote = "") |> 
+# raw_data <- fread("no2_export_people.csv", quote = "") |> 
+#   as_tibble() |> 
+#   clean_names() |> 
+#   mutate(where = if_else(tick %% 2 == 0, "Home", "Work"))
+
+raw_data <- read_parquet("no2.parquet") |> 
   as_tibble() |> 
   clean_names() |> 
   mutate(where = if_else(tick %% 2 == 0, "Home", "Work"))
-
-
 
 # Example data frame
 df <- data.frame(tick = 0:2190)
@@ -153,8 +156,16 @@ results |>
 # by month
 results |> 
   group_by(where, road, date = floor_date(date, "month")) %>%
-  summarise(no2 = mean(no2, na.rm = TRUE)) |> View()
-  pivot_wider(names_from = date, values_from = no2)
+  summarise(no2 = mean(no2, na.rm = TRUE)) |> 
+pivot_wider(names_from = date, values_from = no2)
+
+
+results |> 
+  group_by(where, road, date = floor_date(date, "month")) %>%
+  summarise(no2 = mean(no2, na.rm = TRUE)) |> 
+  pivot_wider(names_from = where, values_from = no2) |> 
+  mutate(per = Work/Home,
+         per1 = if_else(per > 1, per - 1, 1 - per)) 
 
 # Plot
 results |> 
@@ -173,6 +184,9 @@ results |>
         text = element_text(size=15),
         axis.text.x = element_text(size = 8),
         legend.margin=margin(t=-20)) 
+
+ggsave("is road.jpg", width = 9, height = 4)
+
 ```
 
 
@@ -206,8 +220,6 @@ boro_home_no2 |>
   mutate(mycolor = ifelse(ratio >= 1, "Above city average", "Below city average")) |> 
   ggplot() + 
   geom_segment( aes(x=reorder(origin, ratio), xend=origin, y=0, yend=ratio, color=mycolor), size=1.3, alpha=0.9) +
-  
-  #geom_bar(stat = "identity", fill = "steelblue") +
   theme_minimal() +
   labs(x = "", y = "NO2 Ratio", title = "NO2 Ratios Across Different Origins") +
   coord_flip() + # Flips the coordinates to make the chart horizontal; useful for readability with many categories
@@ -237,10 +249,11 @@ boro_work_no2 |>
 
 ```
 
+
 ```{r}
 library(sf)
 
-london <- read_sf("Data/London_Boundary_cleaned.shp")
+london <- read_sf("../Data/London_Boundary_cleaned.shp")
 
 london |> 
   left_join(boro_home_no2, by = c("NAME" = "origin")) |> 
@@ -248,16 +261,92 @@ london |>
   ggplot() +
   geom_sf(aes(fill = ratio)) +
   coord_sf(crs = 27700) +
-  scale_fill_viridis_c()
+  scale_fill_viridis_c() +
+  theme_minimal()
 
 
 london |> 
   left_join(boro_home_no2, by = c("NAME" = "origin")) |> 
   ggplot() +
   geom_sf(aes(fill = no2)) +
-  geom_sf_label( aes(label = NAME), size = 3) +
+  geom_sf_label( aes(label = NAME), size = 3, alpha = .4) +
   coord_sf(crs = 27700) +
-  scale_fill_viridis_c()
+  scale_fill_viridis_c() +
+  theme_minimal()
+
+```
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(gghighlight)
+
+# Assuming 'results1' is your dataset
+results1 <- results %>%
+  rename(origin = districtname, destination = destinationname) %>%
+  group_by(origin, date = floor_date(date, "quarter")) %>%
+  summarise(no2 = mean(no2, na.rm = TRUE))
+
+# Calculate overall average NO2 by origin
+average_no2_by_origin <- results1 %>%
+  group_by(origin) %>%
+  summarise(overall_avg_no2 = mean(no2))
+
+# Identify origins with max and min average NO2
+max_origin <- average_no2_by_origin %>%
+  filter(overall_avg_no2 == max(overall_avg_no2)) %>%
+  pull(origin)
+
+min_origin <- average_no2_by_origin %>%
+  filter(overall_avg_no2 == min(overall_avg_no2)) %>%
+  pull(origin)
+
+# Add a column to mark max, min, and other origins
+results1$highlight <- ifelse(results1$origin %in% max_origin, "Maximum",
+                             ifelse(results1$origin %in% min_origin, "Minimum", "Other"))
+
+
+label_positions <- results1 %>%
+  arrange(date) %>%
+  group_by(origin) %>%
+  filter(date == max(date)) %>%
+  ungroup()
+
+# Filter only for maximum and minimum labels
+label_positions <- label_positions %>%
+  filter(highlight %in% c("Maximum", "Minimum"))
+
+
+# Plot
+ggplot(results1, aes(x = date, y = no2, group = origin)) +
+  geom_line(aes(color = highlight), size = 1) +  # Line size for all origins
+  geom_point(size = 2.5, aes(color = highlight)) +
+  geom_text(data = label_positions, aes(label = origin, y = no2 + 2), hjust = 1.1, vjust = 1.5, size = 5, color = "black") +
+  scale_color_manual(values = c("Maximum" = "red", "Minimum" = "blue", "Other" = "grey")) +
+  geom_hline(yintercept = 40, linetype = "dotted", alpha = 0.5) +
+  labs(x = "", y = "NO2 Exposure") +
+  scale_x_date(date_labels = "%b\n%Y") +
+  theme_bw() +
+  theme(text = element_text(size = 15),
+        #axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none")  # Adjust or remove to display legend
+
+ggsave("no2_disparity.jpg", width = 6, height = 4)
+
+
+```
+
+
+```{r}
+results1 |> 
+  filter(origin %in% c("Lambeth", "Havering")) |> 
+  select(-highlight) |> 
+  pivot_wider(names_from = origin, values_from = no2) |> 
+  mutate(abs_diff = (Lambeth - Havering),
+         pdiff_to_city_mean = (Lambeth - Havering)/39.3 * 100,
+         relative_disparity = Lambeth/Havering)
+
 
 ```
 
