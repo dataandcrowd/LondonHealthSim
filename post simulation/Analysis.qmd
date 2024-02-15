@@ -76,7 +76,7 @@ results |>
   group_by(where, date = floor_date(date, "month")) %>%
   summarise(no2 = mean(no2, na.rm = TRUE)) %>%
   ggplot() +
-  geom_line(aes(x=date, y = no2, group = where, colour = where)) +
+  geom_line(aes(x=date, y = no2, group = where, colour = where), linewidth = 1) +
   #geom_hline(yintercept=40, linetype = "dotted", alpha = .5) +
   labs(x="", y="Mean NO2") +
   scale_x_date(date_labels = "%b\n%Y") +
@@ -88,19 +88,18 @@ results |>
         axis.text.x = element_text(size = 10),
         legend.margin=margin(t=-25)) 
 
-ggsave("exposure.jpg", width = 7, height = 4)
+ggsave("exposure.jpg", width = 5, height = 3)
 
 
 
 results |> 
   mutate(dt_month= month(date),
          dt_year = year(date)) |> 
-  group_by(where, date = floor_date(date, "month"), imd_decile) %>%
+  group_by(where, date = floor_date(date, "bimonth"), imd_decile) %>%
   summarise(no2 = mean(no2, na.rm = TRUE)) %>%
   filter(imd_decile != 0 ) |> 
   ggplot() +
-  geom_line(aes(x=date, y = no2, group = factor(imd_decile), colour = factor(imd_decile)), size = 1) +
-  #geom_hline(yintercept=40, linetype = "dotted", alpha = .5) +
+  geom_line(aes(x=date, y = no2, group = factor(imd_decile), colour = factor(imd_decile)), linewidth = 1) +
   labs(x="", y="Mean NO2") +
   scale_x_date(date_labels = "%b\n%Y") +
   facet_wrap(~where) +
@@ -118,26 +117,30 @@ ggsave("exposure_imd.jpg", width = 9, height = 4)
 
 
 
+
+https://en.wikipedia.org/wiki/List_of_sub-regions_used_in_the_London_Plan
+
+
 ```{r}
 results |> 
   mutate(dt_month= month(date),
          dt_year = year(date)) |> 
   mutate(
     home_cat = case_when(
-      districtname %in% c("Southwark", "Lambeth", "Wandsworth", "Lewisham",
+      origin %in% c("Southwark", "Lambeth", "Wandsworth", "Lewisham",
                           "Hammersmith and Fulham", "Kensington and Chelsea", "Haringey", "Tower Hamlets", "Newham",
                           "Westminster", "Camden", "Islington", "Hackney") ~ "Inner London",
-      districtname %in% c("Enfield", "Waltham Forest", "Barnet", "Brent", "Harrow", "Ealing", "Hounslow", "Hillingdon",
+      origin %in% c("Enfield", "Waltham Forest", "Barnet", "Brent", "Harrow", "Ealing", "Hounslow", "Hillingdon",
                           "Richmond upon Thames", "Kingston upon Thames", "Merton", "Sutton",
                           "Waltham Forest", "Redbridge", "Barking and Dagenham", "Havering", "Greenwich", 
                           "Bexley", "Bromley", "Croydon") ~ "Outer London",
       TRUE ~ NA_character_),
     
     work_cat = case_when(
-      destinationname %in% c("Southwark", "Lambeth", "Wandsworth", "Lewisham",
+      destination %in% c("Southwark", "Lambeth", "Wandsworth", "Lewisham",
                              "Hammersmith and Fulham", "Kensington and Chelsea", "Haringey", "Tower Hamlets", "Newham",
                              "Westminster", "Camden", "Islington", "Hackney") ~ "Inner London",
-      destinationname %in% c("Enfield", "Waltham Forest", "Barnet", "Brent", "Harrow", "Ealing", "Hounslow", "Hillingdon",
+      destination %in% c("Enfield", "Waltham Forest", "Barnet", "Brent", "Harrow", "Ealing", "Hounslow", "Hillingdon",
                              "Richmond upon Thames", "Kingston upon Thames", "Merton", "Sutton",
                              "Waltham Forest", "Redbridge", "Barking and Dagenham", "Havering", "Greenwich", 
                              "Bexley", "Bromley", "Croydon") ~ "Outer London",
@@ -155,7 +158,8 @@ boros |>
 boros |> 
   group_by(home_work, dt_year,where) |> 
   summarise(no2 = mean(no2, na.rm = T)) |> 
-  pivot_wider(names_from = where, values_from = no2)
+  pivot_wider(names_from = where, values_from = no2) |> 
+  mutate(diff = Work - Home)
     
     
 boros |> 
@@ -182,24 +186,69 @@ boros |>
 ggsave("Where.jpg", width = 9, height = 4)
 
 
+results |> 
+  mutate(dt_month= month(date),
+         dt_year = year(date)) |> 
+  mutate(
+    home_cat = case_when(
+      origin %in% c("Camden", "Kensington and Chelsea", "Islington", "Lambeth", "Southwark", "Westminster") ~ "Central",
+      origin %in% c("Barking and Dagenham", "Bexley", "Greenwich", "Hackney", "Havering", "Lewisham", "Newham", "Redbridge", "Tower Hamlets", "Waltham Forest") ~ "East",
+      origin %in% c("Barnet", "Enfield", "Haringey") ~ "North",
+      origin %in% c("Bromley", "Croydon", "Kingston upon Thames", "Merton", "Sutton", "Wandsworth") ~ "North",
+      origin %in% c("Brent", "Ealing", "Hammersmith and Fulham", "Harrow", "Richmond upon Thames", "Hillingdon", "Hounslow") ~ "West",
+      TRUE ~ NA_character_),
+    
+    work_cat = case_when(
+      destination %in% c("Camden", "Kensington and Chelsea", "Islington", "Lambeth", "Southwark", "Westminster") ~ "Central",
+      destination %in% c("Barking and Dagenham", "Bexley", "Greenwich", "Hackney", "Havering", "Lewisham", "Newham", "Redbridge", "Tower Hamlets", "Waltham Forest") ~ "East",
+      destination %in% c("Barnet", "Enfield", "Haringey") ~ "North",
+      destination %in% c("Bromley", "Croydon", "Kingston upon Thames", "Merton", "Sutton", "Wandsworth") ~ "North",
+      destination %in% c("Brent", "Ealing", "Hammersmith and Fulham", "Harrow", "Richmond upon Thames", "Hillingdon", "Hounslow") ~ "West",
+      TRUE ~ NA_character_),
+    home_work = paste(home_cat, work_cat, sep = "-")) -> boros
+
+boros |> 
+  filter(tick == 0) |> 
+  summarise(n = n())
+
+boros |> 
+  filter(tick == 0) |> 
+  group_by(home_cat, work_cat) |> 
+  summarise(n = n(),
+            per = n/7043 * 100)
+
+
+boros |> 
+  group_by(home_work, dt_year,where) |> 
+  summarise(no2 = mean(no2, na.rm = T)) |> 
+  pivot_wider(names_from = where, values_from = no2) |> 
+  mutate(diff = Work - Home)
+
+
+label_data <- boros %>%
+  group_by(where, home_work) %>%
+  summarise(date = max(date), mean_no2 = mean(no2, na.rm = TRUE)) %>%
+  ungroup()
+
+
 boros |> 
   group_by(date, dt_year, dt_month, home_work, where) |> 
-  summarise(no2 = mean(no2, na.rm = T)) |> 
+  summarise(no2 = mean(no2, na.rm = TRUE)) |> 
   mutate(ym = paste(dt_year, dt_month, sep = "_")) |> 
   group_by(where, home_work, date = floor_date(date, "month")) %>%
   summarise(mean_no2 = mean(no2, na.rm = TRUE)) %>%
-  ggplot(aes(date, mean_no2, colour = where)) +
-  geom_line( size = .5) +
-  labs(x="", y="NO2 Exposure") +
-  facet_wrap(~home_work) +
+  ggplot(aes(date, mean_no2, color = home_work)) +  # Color by home/work instead of where
+  geom_line(size = 1) +  # Increase line size
+  labs(x="", y="Mean NO2") +
+  facet_wrap(~where, ncol = 3) +  # Change facets to wrap by 'where'
   scale_x_date(date_labels = "%b\n%Y") +
-  theme_bw() +
+  theme_minimal(base_size = 14) +
   theme(legend.position = "bottom",
         legend.title = element_blank(),
-        legend.text=element_text(size=7),
-        text = element_text(size=15),
-        axis.text.x = element_text(size = 8),
-        legend.margin=margin(t=-20)) 
+        legend.text=element_text(size=10),
+        axis.text.x = element_text(size = 10, angle = 45, hjust = 1),  # Adjust text size and angle
+        legend.margin=margin(t=-20),
+        strip.text.x = element_text(size = 15))  # Adjust facet label size
 
 ggsave("Where2.jpg", width = 9, height = 5)
 ```
@@ -233,16 +282,16 @@ results |>
 results |> 
   group_by(where, road, date = floor_date(date, "month")) %>%
   summarise(no2 = mean(no2, na.rm = TRUE)) |> 
+  mutate(road = if_else(road == "TRUE", "Road", "Background")) |> 
   ggplot(aes(date, no2, colour = road)) +
-  geom_line( size = .5) +
- #geom_hline(yintercept=40, linetype = "dotted", alpha = .5) +
-  labs(x="", y="NO2 Exposure") +
+  geom_line( size = 1.5) +
+  labs(x="", y="Mean NO2") +
   facet_wrap(where~.) +
   scale_x_date(date_labels = "%b\n%Y") +
   theme_bw() +
   theme(legend.position = "bottom",
         legend.title = element_blank(),
-        legend.text=element_text(size=7),
+        legend.text=element_text(size=15),
         text = element_text(size=15),
         axis.text.x = element_text(size = 8),
         legend.margin=margin(t=-20)) 
@@ -254,14 +303,6 @@ ggsave("is road.jpg", width = 9, height = 4)
 
 ## Borough Disparities
 
-```{r}
-rm(list=setdiff(ls(), "results"))
-
-results |> 
-  select(date, where, imd_decile, no2) |> 
-  group_by(imd_decile) |> 
-  summarise(no2 = mean(no2, na.rm = T)) 
-```
 
 
 ```{r}
@@ -271,8 +312,6 @@ results |>
 
 
 results |> 
-  rename(origin = districtname,
-         destination = destinationname) |> 
   group_by(origin) |> 
   summarise(no2 = mean(no2, na.rm = T)) -> boro_home_no2
 
@@ -281,18 +320,20 @@ boro_home_no2 |>
   mutate(ratio = no2/39.3) |> 
   mutate(mycolor = ifelse(ratio >= 1, "Above city average", "Below city average")) |> 
   ggplot() + 
-  geom_segment( aes(x=reorder(origin, ratio), xend=origin, y=0, yend=ratio, color=mycolor), size=1.3, alpha=0.9) +
+  #geom_segment(aes(x=reorder(origin, ratio), xend=origin, y=1, yend=ratio), color = mycolor) +
+  geom_segment(aes(x=reorder(origin, ratio), xend=origin, y=1, yend=ratio, color=mycolor), size=1.3, alpha=0.9) +
   theme_minimal() +
-  labs(x = "", y = "NO2 Ratio", title = "NO2 Ratios Across Different Origins") +
+  labs(x = "", y = "Relative Disparity", title = "Relative NO2 Disparities at Home Hours") +
   coord_flip() + # Flips the coordinates to make the chart horizontal; useful for readability with many categories
+  ylim(0.7,1.3) +
   theme(legend.position = "bottom",
         legend.title = element_blank()) # Adjust text angle and justification if kept vertical
+
+ggsave("no2_IMD_home.jpg", width = 7, height = 5)
 
 
 
 results |> 
-  rename(origin = districtname,
-         destination = destinationname) |> 
   group_by(destination) |> 
   summarise(no2 = mean(no2, na.rm = T)) -> boro_work_no2
 
@@ -302,13 +343,15 @@ boro_work_no2 |>
   mutate(ratio = no2/39.3) |> 
   mutate(mycolor = ifelse(ratio >= 1, "Above city average", "Below city average")) |> 
   ggplot() + 
-  geom_segment( aes(x=reorder(destination, ratio), xend=destination, y=0, yend=ratio, color=mycolor), size=1.3, alpha=0.9) +
+  geom_segment( aes(x=reorder(destination, ratio), xend=destination, y=1, yend=ratio, color=mycolor), size=1.3, alpha=0.9) +
   theme_minimal() +
-  labs(x = "", y = "NO2 Ratio", title = "NO2 Ratios Across London Boroughs") +
+  labs(x = "", y = "Relative Disparity", title = "Relative NO2 Disparities at Work Hours") +
   coord_flip() + # Flips the coordinates to make the chart horizontal; useful for readability with many categories
+  ylim(0.7,1.3) +
   theme(legend.position = "bottom",
         legend.title = element_blank()) # Adjust text angle and justification if kept vertical
 
+ggsave("no2_IMD_work.jpg", width = 7, height = 5)
 ```
 
 
@@ -340,13 +383,10 @@ london |>
 
 
 ```{r}
-library(dplyr)
-library(ggplot2)
 library(gghighlight)
 
 # Assuming 'results1' is your dataset
 results1 <- results %>%
-  rename(origin = districtname, destination = destinationname) %>%
   group_by(origin, date = floor_date(date, "quarter")) %>%
   summarise(no2 = mean(no2, na.rm = TRUE))
 
@@ -384,17 +424,27 @@ label_positions <- label_positions %>%
 ggplot(results1, aes(x = date, y = no2, group = origin)) +
   geom_line(aes(color = highlight), size = 1) +  # Line size for all origins
   geom_point(size = 2.5, aes(color = highlight)) +
-  geom_text(data = label_positions, aes(label = origin, y = no2 + 2), hjust = 1.1, vjust = 1.5, size = 5, color = "black") +
+  #geom_text(data = label_positions, aes(label = origin, y = no2 + 2), hjust = 1.1, vjust = 1.5, size = 5, color = "black") +
   scale_color_manual(values = c("Maximum" = "red", "Minimum" = "blue", "Other" = "grey")) +
-  geom_hline(yintercept = 40, linetype = "dotted", alpha = 0.5) +
-  labs(x = "", y = "NO2 Exposure") +
+  labs(x = "", y = "Mean NO2") +
   scale_x_date(date_labels = "%b\n%Y") +
   theme_bw() +
   theme(text = element_text(size = 15),
         #axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "none")  # Adjust or remove to display legend
 
-ggsave("no2_disparity.jpg", width = 6, height = 4)
+ggsave("disparity_abs.jpg", width = 6, height = 4)
+
+
+results1 |> 
+  filter(origin %in% c("Lambeth", "Havering")) |> 
+  select(-highlight) |> 
+  pivot_wider(names_from = origin, values_from = no2) |> 
+  mutate(abs_diff = (Lambeth - Havering),
+         pdiff_to_city_mean = (Lambeth - Havering)/39.3 * 100,
+         relative_disparity = Lambeth/Havering)
+
+
 
 
 ```
@@ -405,15 +455,65 @@ results1 |>
   filter(origin %in% c("Lambeth", "Havering")) |> 
   select(-highlight) |> 
   pivot_wider(names_from = origin, values_from = no2) |> 
+  mutate(`Absolute difference` = (Lambeth - Havering),
+         `Percent absolute difference` = (Lambeth - Havering)/39.3 * 100,
+         `Relative disparity` = Lambeth/Havering) |> 
+  select(-c(Havering, Lambeth)) |> 
+  pivot_longer(!date, names_to = "var", values_to = "value") |> 
+  mutate(where = "Home") -> disparity_home
+
+
+# Assuming 'results2' is your dataset
+results2 <- results %>%
+  group_by(destination, date = floor_date(date, "quarter")) %>%
+  summarise(no2 = mean(no2, na.rm = TRUE))
+
+# Calculate overall average NO2 by destination
+average_no2_by_destination <- results2 %>%
+  group_by(destination) %>%
+  summarise(overall_avg_no2 = mean(no2))
+
+
+
+results2 |> 
+  filter(destination %in% c("Lambeth", "Havering")) |> 
+  pivot_wider(names_from = destination, values_from = no2) |> 
   mutate(abs_diff = (Lambeth - Havering),
          pdiff_to_city_mean = (Lambeth - Havering)/39.3 * 100,
          relative_disparity = Lambeth/Havering)
 
 
+
+results2 |> 
+  filter(destination %in% c("Lambeth", "Havering")) |> 
+  pivot_wider(names_from = destination, values_from = no2) |> 
+  mutate(`Absolute difference` = (Lambeth - Havering),
+         `Percent absolute difference` = (Lambeth - Havering)/39.3 * 100,
+         `Relative disparity` = Lambeth/Havering) |> 
+  select(-c(Havering, Lambeth)) |> 
+  pivot_longer(!date, names_to = "var", values_to = "value") |> 
+  mutate(where = "Work") -> disparity_work
+
+disparity_tbl <- bind_rows(disparity_home, disparity_work)
+
+
+
 ```
 
 
+```{r}
+disparity_tbl |> 
+  ggplot() +
+  geom_line(aes(x = date, y = value, color = var, linetype = where), size = 1) +
+  facet_wrap(~var, scales = "free", ncol = 4) +
+  labs(x = "", y = "Absolute and Relative Differences in NO2") +
+  scale_x_date(date_labels = "%b\n%Y") +
+  theme_bw() +
+  theme(text = element_text(size = 15),
+        legend.position = "none",
+        axis.title.y = element_text(size = 10))
 
-
+ggsave("disparity_origin.jpg", width = 9, height = 4)
+```
 
 
