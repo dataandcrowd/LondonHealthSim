@@ -194,7 +194,7 @@ results |>
       origin %in% c("Camden", "Kensington and Chelsea", "Islington", "Lambeth", "Southwark", "Westminster") ~ "Central",
       origin %in% c("Barking and Dagenham", "Bexley", "Greenwich", "Hackney", "Havering", "Lewisham", "Newham", "Redbridge", "Tower Hamlets", "Waltham Forest") ~ "East",
       origin %in% c("Barnet", "Enfield", "Haringey") ~ "North",
-      origin %in% c("Bromley", "Croydon", "Kingston upon Thames", "Merton", "Sutton", "Wandsworth") ~ "North",
+      origin %in% c("Bromley", "Croydon", "Kingston upon Thames", "Merton", "Sutton", "Wandsworth") ~ "South",
       origin %in% c("Brent", "Ealing", "Hammersmith and Fulham", "Harrow", "Richmond upon Thames", "Hillingdon", "Hounslow") ~ "West",
       TRUE ~ NA_character_),
     
@@ -202,7 +202,7 @@ results |>
       destination %in% c("Camden", "Kensington and Chelsea", "Islington", "Lambeth", "Southwark", "Westminster") ~ "Central",
       destination %in% c("Barking and Dagenham", "Bexley", "Greenwich", "Hackney", "Havering", "Lewisham", "Newham", "Redbridge", "Tower Hamlets", "Waltham Forest") ~ "East",
       destination %in% c("Barnet", "Enfield", "Haringey") ~ "North",
-      destination %in% c("Bromley", "Croydon", "Kingston upon Thames", "Merton", "Sutton", "Wandsworth") ~ "North",
+      destination %in% c("Bromley", "Croydon", "Kingston upon Thames", "Merton", "Sutton", "Wandsworth") ~ "South",
       destination %in% c("Brent", "Ealing", "Hammersmith and Fulham", "Harrow", "Richmond upon Thames", "Hillingdon", "Hounslow") ~ "West",
       TRUE ~ NA_character_),
     home_work = paste(home_cat, work_cat, sep = "-")) -> boros
@@ -513,7 +513,68 @@ disparity_tbl |>
         legend.position = "none",
         axis.title.y = element_text(size = 10))
 
-ggsave("disparity_origin.jpg", width = 9, height = 4)
+ggsave("disparity_abs-relav.jpg", width = 9, height = 4)
 ```
+
+
+## Quantifying Disparities in H and W
+
+
+```{r}
+boros |> 
+  group_by(date = floor_date(date, "month")) %>%
+  summarise(monthly_no2 = mean(no2, na.rm = TRUE)) -> monthly_no2
+
+
+boros |> 
+  group_by(home_cat, work_cat, where, date = floor_date(date, "month")) %>%
+  summarise(no2 = mean(no2, na.rm = TRUE)) |>
+  left_join(monthly_no2, by = "date") |>
+  mutate(disparity = no2 / monthly_no2) |> 
+  #mutate(work_cat = paste0("Heading ", work_cat)) |> 
+  ggplot() +
+  geom_line(aes(x = date, y = disparity, color = work_cat, linetype = where), size = .6) +
+  facet_wrap(~home_cat, ncol = 3) +
+  ylim(0.7, 1.4) +
+  labs(x = "", y = "Disparity") +
+  scale_x_date(date_labels = "%b\n%Y") +
+  theme_bw() +
+  theme(legend.position = "bottom",
+        legend.title = element_blank(),
+        legend.text=element_text(size=10),
+        axis.text.x = element_text(size = 10),
+        legend.margin=margin(t=-20),
+        strip.text.x = element_text(size = 15)) 
+
+ggsave("disparity_ratio.jpg", width = 9, height = 5)
+```
+
+```{r}
+boros |> 
+  group_by(home_cat, work_cat, where, road, date = floor_date(date, "month")) %>%
+  summarise(no2 = mean(no2, na.rm = TRUE)) |>
+  left_join(monthly_no2, by = "date") |>
+  mutate(disparity = no2 / monthly_no2) |> 
+  #mutate(work_cat = paste0("Heading ", work_cat)) |> 
+  mutate(road = if_else(road == "TRUE", "Road", "Background")) |> 
+  ggplot() +
+  geom_line(aes(x = date, y = disparity, color = work_cat, linetype = where), size = .6) +
+  facet_grid(vars(home_cat), vars(road)) +
+  ylim(0.7, 1.5) +
+  labs(x = "", y = "Disparity") +
+  scale_x_date(date_labels = "%b\n%Y") +
+  theme_bw() +
+  theme(#legend.position = "bottom",
+        legend.title = element_blank(),
+        legend.text=element_text(size=8),
+        axis.text.x = element_text(size = 10),
+        legend.margin=margin(t=-20),
+        strip.text.x = element_text(size = 15),
+        panel.spacing = unit(1, "lines")) 
+
+ggsave("disparity_ratio_road.jpg", width = 7, height = 7)
+
+```
+
 
 
