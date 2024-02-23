@@ -61,7 +61,7 @@ to set-gis-data
   set lc   gis:load-dataset "Data/London_LandCover.shp"
   set road gis:load-dataset "Data/London_Road_Dissolve.shp"
   set IMD gis:load-dataset "Data/London_LSOAs_IMD.shp"
-  set nox_weighting gis:load-dataset "Data/London_NOX.shp"
+  set nox_weighting gis:load-dataset "Data/London_NO2_Weight.shp"
 
   ;; patch size: approx 200m x 200m
 
@@ -133,19 +133,17 @@ end
 to set-nox-weight
     foreach gis:feature-list-of nox_weighting [vector-feature ->
     ask patches[ if gis:intersects? vector-feature self [
-      set nox_weight gis:property-value vector-feature "emiweight"
+      set nox_weight gis:property-value vector-feature "NO2"
       ]
  ]]
 
   ask patches with [nox_weight = 0 or nox_weight = nobody][set nox_weight 0]
   ask patches with [is-research-area?][
-    if nox_weight = 0 [set nox_weight 1]
-    if nox_weight = 1 [set nox_weight 1.15]
-    if nox_weight = 2 [set nox_weight 1.20]
-    if nox_weight = 3 [set nox_weight 1.25]
-    if nox_weight = 4 [set nox_weight 1.30]
-    if nox_weight = 5 [set nox_weight 1.40]
-
+    if nox_weight >  0 and nox_weight < 23 [set nox_weight 1]
+    if nox_weight >= 23 and nox_weight < 27 [set nox_weight 2]
+    if nox_weight >= 27 and nox_weight < 31 [set nox_weight 3]
+    if nox_weight >= 31 and nox_weight < 36 [set nox_weight 4]
+    if nox_weight >= 36 [set nox_weight 5]
   ]
 
 output-print "nox weighting added" ;;
@@ -413,8 +411,8 @@ to go
   generate-no2-road
   generate-no2-patches
   move-people
-  ;export-no2
-  export-no2-exposure
+  no2-calibration
+  ;export-no2-exposure
 
   tick
   if ticks = 2191 [stop]
@@ -480,8 +478,8 @@ end
 
 
 
-to export-no2
-  let file-name "no2_export.csv"
+to no2-calibration
+  let file-name "no2_calibration.csv"
   ;let list_roadstation ["BT4" "BT6" "BT8" "EI1" "GB6" "GN0" "GN3" "HV1" "HV3" "IS2" "KT6" "LW4" "RB4" "WMB"]
   let list_roadstation (list  "BG1" "BG2" "BL0" "BQ7" "BX1" "BX2" "CT3" "EN1" "EN7" "GR4" "HG4" "HI0"
  "HR1" "IS6" "KC1" "LB6" "LH0" "LW1" "LW5" "NM3"  "RB7" "RI2" "SK6" "WA2" "WA9" "WM0")
@@ -522,7 +520,7 @@ to export-no2-exposure
 
   if not file-exists? file-name [
     file-open file-name
-    file-write "tick, who, IMD_decile, districtname, destinationname, road, no2"
+    file-write "tick, who, age, IMD_decile, origin, destination, road, no2"
     file-print ""  ; Move to the next line
     file-close
   ]
@@ -532,7 +530,7 @@ to export-no2-exposure
 
   ; Loop through each patch in the research area and check if monitor-type is in the list
   ask people with [is-research-area? and destinationname != "others"] [
-      file-print (word  ticks ", " who ", " IMD_decile ", " districtname ", " destinationname ", " road? ", " no2)
+      file-print (word  ticks ", " who ", " age ", " IMD_decile ", " districtname ", " destinationname ", " road? ", " no2)
 
   ]
   ; Close the file
