@@ -51,7 +51,7 @@ to set-gis-data
   gis:load-coordinate-system (word "Data/London_Boundary_cleaned.prj")
   set gu   gis:load-dataset "Data/London_Boundary_cleaned.shp"
   set lc   gis:load-dataset "Data/London_LandCover.shp"
-  set road gis:load-dataset "Data/London_Road_Clean.shp"
+  set road gis:load-dataset "Data/London_Road_Dissolve.shp"
   set IMD gis:load-dataset "Data/IMD2019_LocalAuthority_Upper.shp"
   gis:set-world-envelope (gis:envelope-union-of gis:envelope-of gu)
   ask patches gis:intersecting gu [set is-research-area? true]
@@ -1293,7 +1293,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.3.0
+NetLogo 6.4.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
